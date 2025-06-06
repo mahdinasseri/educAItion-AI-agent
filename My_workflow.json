@@ -12,7 +12,7 @@
       "typeVersion": 1,
       "position": [
         140,
-        700
+        620
       ],
       "credentials": {
         "openAiApi": {
@@ -74,7 +74,7 @@
       "typeVersion": 2.4,
       "position": [
         -340,
-        160
+        0
       ],
       "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
       "name": "Get All Users",
@@ -130,7 +130,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n  AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
+        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n    AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -185,7 +185,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO user_words (user_id, word_id, box)\nWITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n)\nSELECT \n  ruw.user_id, \n  ruw.word_id, \n  ruw.box + 1 AS box\nFROM ranked_user_words ruw\nWHERE ruw.rn = 1;\n",
+        "query": "INSERT INTO user_words (user_id, word_id, box)\nWITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  ruw.user_id, \n  ruw.word_id, \n  ruw.box + 1 AS box\nFROM ranked_user_words ruw\nWHERE ruw.rn = 1;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -205,14 +205,14 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Get All Users').item.json.chatID }}",
-        "text": "=Hi {{ $('Get All Users').item.json.name }}\n---\n{{ $json.output }}",
+        "chatId": "={{ $('Get All Users1').item.json.chatID }}",
+        "text": "=Hi {{ $('Get All Users1').item.json.name }}\n---\n{{ $json.output }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        700,
+        660,
         380
       ],
       "id": "bc31c677-468e-4121-9b27-486102a97952",
@@ -230,8 +230,14 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 13,
-              "triggerAtMinute": 30
+              "triggerAtHour": 7,
+              "triggerAtMinute": 6
+            },
+            {
+              "triggerAtHour": 11
+            },
+            {
+              "triggerAtHour": 14
             }
           ]
         }
@@ -240,10 +246,50 @@
       "typeVersion": 1.2,
       "position": [
         -620,
-        180
+        0
       ],
       "id": "a2c277c2-1d50-40bd-b542-d1fed52caa06",
       "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id,name,chatID from customers where chatID is Not Null;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -320,
+        380
+      ],
+      "id": "465fc683-1fe9-4d19-9f5f-2ed8d9587a27",
+      "name": "Get All Users1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -620,
+        380
+      ],
+      "id": "b313289b-f389-41e6-9a8c-b92e97f91f22",
+      "name": "Schedule Trigger1"
     }
   ],
   "pinData": {},
@@ -291,11 +337,6 @@
         [
           {
             "node": "Select New Word",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Select Review Words",
             "type": "main",
             "index": 0
           }
@@ -356,13 +397,35 @@
           }
         ]
       ]
+    },
+    "Get All Users1": {
+      "main": [
+        [
+          {
+            "node": "Select Review Words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get All Users1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "0c2aba39-15a6-49ff-9c43-f3c322e0796f",
+  "versionId": "3bf32553-a8ae-4edb-a1e7-5ff099640429",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
