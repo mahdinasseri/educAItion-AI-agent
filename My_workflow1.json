@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        120,
-        580
+        140,
+        660
       ],
       "credentials": {
         "openAiApi": {
@@ -30,8 +30,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        560,
-        20
+        660,
+        -160
       ],
       "id": "a10320fc-a96c-4091-84e1-3066a08b3155",
       "name": "Telegram",
@@ -52,7 +52,7 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -220,
+        -120,
         0
       ],
       "id": "3c232570-9f3e-42de-b561-f6e8065c1fed",
@@ -73,7 +73,7 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -420,
+        -360,
         0
       ],
       "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
@@ -115,8 +115,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        820,
-        20
+        900,
+        0
       ],
       "id": "db19b4f8-caf1-45b8-abd9-272442ebe3b8",
       "name": "Insert in user_words",
@@ -130,7 +130,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n    AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
+        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n    #AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -161,8 +161,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        200,
-        -300
+        240,
+        -40
       ]
     },
     {
@@ -178,9 +178,30 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        200,
+        280,
         380
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO user_words (user_id, word_id, box)\nWITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  ruw.user_id, \n  ruw.word_id, \n  ruw.box + 1 AS box\nFROM ranked_user_words ruw\nWHERE ruw.rn = 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1820,
+        680
+      ],
+      "id": "475a60d9-dc9f-4921-952f-e4a1e7072415",
+      "name": "Insert Reviewed Words in user_words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
     },
     {
       "parameters": {
@@ -191,7 +212,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        580,
+        660,
         380
       ],
       "id": "bc31c677-468e-4121-9b27-486102a97952",
@@ -209,11 +230,11 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 4,
+              "triggerAtHour": 7,
               "triggerAtMinute": 6
             },
             {
-              "triggerAtHour": 9
+              "triggerAtHour": 11
             },
             {
               "triggerAtHour": 14
@@ -298,8 +319,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        0,
-        0
+        80,
+        -280
       ],
       "id": "f9d403d7-814b-4817-a722-4bbca978b49d",
       "name": "If"
@@ -331,7 +352,7 @@
       "typeVersion": 2.4,
       "position": [
         660,
-        -300
+        160
       ],
       "id": "4a97a174-549a-4b86-9a24-787df7d394e0",
       "name": "Insert in word definitions",
@@ -346,28 +367,21 @@
       "parameters": {
         "operation": "sendAndWait",
         "chatId": "={{ $('Get All Users1').item.json.chatID }}",
-        "message": "=Do you remember **{{ $json.word }}** ?",
+        "message": "=Do you remember ? {{ $json.word }}",
         "approvalOptions": {
           "values": {
             "approvalType": "double",
             "approveLabel": "✅ Yes I do.",
-            "disapproveLabel": "❌ No I did not."
+            "disapproveLabel": "❌ Ni I did not."
           }
         },
-        "options": {
-          "limitWaitTime": {
-            "values": {
-              "resumeAmount": 5,
-              "resumeUnit": "minutes"
-            }
-          }
-        }
+        "options": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1360,
-        400
+        1320,
+        360
       ],
       "id": "0dbf7d69-5963-4ca7-bab4-59e420972348",
       "name": "Telegram2",
@@ -382,14 +396,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n  \n)\nSELECT \n  w.word,\n  ruw.user_id, \n  ruw.word_id, \n  ruw.box AS box\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\nWHERE ruw.rn = 1\norder by ruw.word_id\nlimit 7;\n",
+        "query": "\nWITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    #AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n  order by word_id\n  limit 7\n)\nSELECT \n  w.word,\n  ruw.user_id, \n  ruw.word_id, \n  ruw.box + 1 AS box\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\nWHERE ruw.rn = 1;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        820,
-        380
+        1020,
+        360
       ],
       "id": "47293eff-0faf-45e3-8aae-12844bf1be89",
       "name": "Insert Reviewed Words in user_words1",
@@ -402,58 +416,37 @@
     },
     {
       "parameters": {
-        "table": {
-          "__rl": true,
-          "value": "user_words",
-          "mode": "list",
-          "cachedResultName": "user_words"
-        },
-        "dataMode": "defineBelow",
-        "valuesToSend": {
-          "values": [
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
             {
-              "column": "user_id",
-              "value": "={{ $('Insert Reviewed Words in user_words1').item.json.user_id }}"
-            },
-            {
-              "column": "word_id",
-              "value": "={{ $('Insert Reviewed Words in user_words1').item.json.word_id }}"
-            },
-            {
-              "column": "box",
-              "value": "={{$json.data.approved ? $('Insert Reviewed Words in user_words1').item.json.box +1 : $('Insert Reviewed Words in user_words1').item.json.box -1 }}"
+              "id": "8cbd90a8-8a88-4603-9199-e95e435571a6",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
             }
-          ]
+          ],
+          "combinator": "and"
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.mySql",
-      "typeVersion": 2.4,
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
       "position": [
-        1700,
-        400
+        1780,
+        240
       ],
-      "id": "672acfb6-3ee4-4ac8-9544-9c1e572fe79e",
-      "name": "Insert Reviewed Words in user_words2",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        1080,
-        380
-      ],
-      "id": "4ee4c4b4-3745-47be-9e08-c1b080a1722c",
-      "name": "Loop Over Items"
+      "id": "234cc198-fc9c-4da3-8737-64af847167a2",
+      "name": "If1"
     }
   ],
   "pinData": {},
@@ -611,7 +604,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Telegram2",
             "type": "main",
             "index": 0
           }
@@ -622,34 +615,16 @@
       "main": [
         [
           {
-            "node": "Insert Reviewed Words in user_words2",
+            "node": "If1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Insert Reviewed Words in user_words2": {
+    "Insert Reviewed Words in user_words": {
       "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
-      "main": [
-        [],
-        [
-          {
-            "node": "Telegram2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
@@ -657,7 +632,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "307d42f1-7232-4cdd-be5c-8d77ab074f2b",
+  "versionId": "0bdabae2-5039-4833-8551-621cff950dd1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
