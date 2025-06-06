@@ -1,0 +1,372 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "id": "b89b147e-06f1-4c14-9ade-7f8cd7ab0e86",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        140,
+        700
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get All Users').item.json.chatID }}",
+        "text": "=Hi  {{ $('Get All Users').item.json.name }}\n{{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "a10320fc-a96c-4091-84e1-3066a08b3155",
+      "name": "Telegram",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * ,\n  0 as box\n  from words\n  where id not in (\n  select word_id from user_words where user_id={{ $json.id }}\n  )\nORDER BY RAND()\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3c232570-9f3e-42de-b561-f6e8065c1fed",
+      "name": "Select New Word",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id,name,chatID from customers where chatID is Not Null;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -340,
+        160
+      ],
+      "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
+      "name": "Get All Users",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_words",
+          "mode": "list",
+          "cachedResultName": "user_words"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('Get All Users').item.json.id }}"
+            },
+            {
+              "column": "word_id",
+              "value": "={{ $('Select New Word').item.json.id }}"
+            },
+            {
+              "column": "box",
+              "value": "={{ $('Select New Word').item.json.box + 1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        900,
+        0
+      ],
+      "id": "db19b4f8-caf1-45b8-abd9-272442ebe3b8",
+      "name": "Insert in user_words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n  AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        380
+      ],
+      "id": "744b444e-af70-4cd5-8312-788fa8c5ab96",
+      "name": "Select Review Words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Teach this word: '{{ $json.word }}'",
+        "options": {
+          "systemMessage": "=\n### 📘 Prompt: Teach a New English Word\n\n**Objective:** Introduce and teach one new English word to an English learner in a clear, comprehensive, and memorable way.\n\n---\n\n**Instructions:**\n\n{word} : Include part of speech (noun, verb, adjective, etc.). {Definition: Provide a simple, clear definition suitable for intermediate learners.}, {Pronunciation: Write the phonetic pronunciation (IPA or simplified format). Add an audio pronunciation if possible.}\n\n* List 2–3 common synonyms.\n* List 1–2 antonyms.\n\n* Give 2–3 example sentences (professional and casual if possible).\n\n**Visual or Metaphor**: * Offer a metaphor, image, or situation that helps the learner remember the word."
+        }
+      },
+      "id": "18f6b990-3321-4578-ae96-c72dd14d7ddf",
+      "name": "Agent New Word",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.word_list }}",
+        "options": {
+          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n9. finally, seperatly, list the words and a very short defenition of them.\n"
+        }
+      },
+      "id": "096d5fa5-77a4-4491-8199-5522ce577403",
+      "name": "Agent Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        280,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO user_words (user_id, word_id, box)\nWITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n)\nSELECT \n  ruw.user_id, \n  ruw.word_id, \n  ruw.box + 1 AS box\nFROM ranked_user_words ruw\nWHERE ruw.rn = 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        920,
+        380
+      ],
+      "id": "475a60d9-dc9f-4921-952f-e4a1e7072415",
+      "name": "Insert Reviewed Words in user_words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get All Users').item.json.chatID }}",
+        "text": "=Hi {{ $('Get All Users').item.json.name }}\n---\n{{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        700,
+        380
+      ],
+      "id": "bc31c677-468e-4121-9b27-486102a97952",
+      "name": "Telegram1",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 13,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -620,
+        180
+      ],
+      "id": "a2c277c2-1d50-40bd-b542-d1fed52caa06",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent New Word",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Insert in user_words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select New Word": {
+      "main": [
+        [
+          {
+            "node": "Agent New Word",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Users": {
+      "main": [
+        [
+          {
+            "node": "Select New Word",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Select Review Words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Review Words": {
+      "main": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent New Word": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Review": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Insert Reviewed Words in user_words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0c2aba39-15a6-49ff-9c43-f3c322e0796f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "w1Zvs3MMF3yljVfk",
+  "tags": []
+}
