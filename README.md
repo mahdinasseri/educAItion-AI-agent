@@ -32,7 +32,7 @@ It sends users new words every day, generates personalized mini-lessons and AI-g
   * An AI-generated image is created to support visual memory.
   * All of it is delivered directly to the user's Telegram.
   
-  <img src="img/IMG_7009.jpeg" height="400">   <img src="img/IMG_7007.jpeg" height="400">
+  <img src="img/IMG_7008.jpeg" height="400">   <img src="img/IMG_7009.jpeg" height="400">
 
 
 
