@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        120,
-        580
+        100,
+        640
       ],
       "credentials": {
         "openAiApi": {
@@ -130,7 +130,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n    AND DATEDIFF(NOW(), ruw.insertion_time) >= POWER(2, ruw.box - 1)\n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
+        "query": "WITH ranked_user_words AS (\n  SELECT uw.*, \n         ROW_NUMBER() OVER (PARTITION BY uw.word_id ORDER BY uw.insertion_time DESC) AS rn\n  FROM user_words uw\n  where user_id={{ $json.id }}\n  \n),\nfiltered_user_words AS (\n  SELECT ruw.*\n  FROM ranked_user_words ruw\n  WHERE ruw.rn = 1\n   AND DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, ruw.box - 1)  \n  order by ruw.word_id\n  limit 7\n)\nSELECT \n  fuw.user_id,\n  GROUP_CONCAT(w.word ORDER BY fuw.insertion_time DESC SEPARATOR ', ') AS word_list\nFROM filtered_user_words fuw\nJOIN words w ON w.id = fuw.word_id\nGROUP BY fuw.user_id;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -170,7 +170,7 @@
         "promptType": "define",
         "text": "={{ $json.word_list }}",
         "options": {
-          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n9. finally, seperatly, list the words and a very short defenition of them.\n"
+          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n"
         }
       },
       "id": "096d5fa5-77a4-4491-8199-5522ce577403",
@@ -178,8 +178,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        200,
-        380
+        240,
+        260
       ]
     },
     {
@@ -191,8 +191,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        580,
-        380
+        600,
+        260
       ],
       "id": "bc31c677-468e-4121-9b27-486102a97952",
       "name": "Telegram1",
@@ -209,14 +209,16 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 4,
-              "triggerAtMinute": 6
+              "triggerAtHour": 9,
+              "triggerAtMinute": 30
             },
             {
-              "triggerAtHour": 9
+              "triggerAtHour": 12,
+              "triggerAtMinute": 30
             },
             {
-              "triggerAtHour": 14
+              "triggerAtHour": 20,
+              "triggerAtMinute": 30
             }
           ]
         }
@@ -256,7 +258,7 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 10
+              "triggerAtHour": 11
             }
           ]
         }
@@ -357,7 +359,7 @@
         "options": {
           "limitWaitTime": {
             "values": {
-              "resumeAmount": 5,
+              "resumeAmount": 15,
               "resumeUnit": "minutes"
             }
           }
@@ -367,7 +369,7 @@
       "typeVersion": 1.2,
       "position": [
         1360,
-        400
+        280
       ],
       "id": "0dbf7d69-5963-4ca7-bab4-59e420972348",
       "name": "Telegram2",
@@ -382,14 +384,14 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    AND DATEDIFF(NOW(), insertion_time) >= POWER(2, box - 1)\n  \n)\nSELECT \n  w.word,\n  ruw.user_id, \n  ruw.word_id, \n  ruw.box AS box\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\nWHERE ruw.rn = 1\norder by ruw.word_id\nlimit 7;\n",
+        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $('Get All Users1').item.json.id }}\n    \n  \n)\nSELECT \n  w.word,\n  ruw.user_id, \n  ruw.word_id, \n  ruw.box AS box\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\nWHERE ruw.rn = 1\n  AND DATEDIFF(NOW(), insertion_time) > POWER(2, box - 1)\norder by ruw.word_id\nlimit 7;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
         820,
-        380
+        260
       ],
       "id": "47293eff-0faf-45e3-8aae-12844bf1be89",
       "name": "Insert Reviewed Words in user_words1",
@@ -421,7 +423,7 @@
             },
             {
               "column": "box",
-              "value": "={{$json.data.approved ? $('Insert Reviewed Words in user_words1').item.json.box +1 : $('Insert Reviewed Words in user_words1').item.json.box -1 }}"
+              "value": "={{$json.data.approved==true ? $('Insert Reviewed Words in user_words1').item.json.box + 1 : 1 }}"
             }
           ]
         },
@@ -430,8 +432,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        1700,
-        400
+        1620,
+        280
       ],
       "id": "672acfb6-3ee4-4ac8-9544-9c1e572fe79e",
       "name": "Insert Reviewed Words in user_words2",
@@ -444,16 +446,193 @@
     },
     {
       "parameters": {
-        "options": {}
+        "options": {
+          "reset": false
+        }
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
         1080,
-        380
+        260
       ],
       "id": "4ee4c4b4-3745-47be-9e08-c1b080a1722c",
       "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -660,
+        -760
+      ],
+      "id": "0fa31376-6f76-425e-95d5-2bc01f44b0b4",
+      "name": "Telegram Trigger",
+      "webhookId": "04cf13b3-4366-4812-a29e-95ed04216493",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "customers",
+          "mode": "list",
+          "cachedResultName": "customers"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "chatID",
+              "value": "={{ $json.message.chat.id }}"
+            },
+            {
+              "column": "name",
+              "value": "={{ $json.message.from.first_name }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $json.message.from.username }}"
+            }
+          ]
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        80,
+        -740
+      ],
+      "id": "f3664aae-2c48-4b21-aa95-44a5d47c5fa4",
+      "name": "Add new User",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * from customers where chatID = {{ $json.message.chat.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -460,
+        -760
+      ],
+      "id": "b5e4030c-9367-4d7b-a139-b4c24eaf1b13",
+      "name": "Add new User1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1641c42-f526-4a95-9c48-873c1e84693d",
+              "leftValue": "={{ $json.chatID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -260,
+        -760
+      ],
+      "id": "4908b14e-e4bd-4e71-aebd-130a3c66741c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.word_list }}",
+        "options": {
+          "systemMessage": "=you are an english teacher.\ngive definitions of these words, one-by-one, each in one line\nobjective: leaarn me the meaning of words.\n\n"
+        }
+      },
+      "id": "654f6919-121b-4003-b6e8-3ed26ee7d355",
+      "name": "Agent Review1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1480,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get All Users1').item.json.chatID }}",
+        "text": "=Today's Words for Review:\n{{ $json.output }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1820,
+        620
+      ],
+      "id": "ea2091c6-f1c0-4639-a1e7-c52763e14062",
+      "name": "Telegram3",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1280,
+        580
+      ],
+      "id": "891c60da-f08e-45b6-a1d0-9b98d019cae7",
+      "name": "Merge"
     }
   ],
   "pinData": {},
@@ -468,6 +647,11 @@
           },
           {
             "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agent Review1",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -514,6 +698,11 @@
             "node": "Agent Review",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -642,7 +831,13 @@
     },
     "Loop Over Items": {
       "main": [
-        [],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Telegram2",
@@ -651,13 +846,76 @@
           }
         ]
       ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Add new User1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add new User": {
+      "main": [
+        []
+      ]
+    },
+    "Add new User1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Add new User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Review1": {
+      "main": [
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Agent Review1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "307d42f1-7232-4cdd-be5c-8d77ab074f2b",
+  "versionId": "201d29da-cefc-4543-b674-6250471fbebf",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
