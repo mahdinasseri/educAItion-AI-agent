@@ -1,4 +1,4 @@
-# educAItion
+# educAItion - AI-Powered English Learning That Sticks
 
 Hi! I built **educAItion** because I was struggling to learn English effectively — despite attending many courses and using countless apps. One tool that really helped me before was the [Leitner system](https://en.wikipedia.org/wiki/Leitner_system), which is a proven technique for remembering vocabulary through spaced repetition.
 
@@ -32,7 +32,7 @@ It sends users new words every day, generates personalized mini-lessons and AI-g
   * An AI-generated image is created to support visual memory.
   * All of it is delivered directly to the user's Telegram.
   
-   <img src="img/IMG_7009.jpeg" height="400">   <img src="img/IMG_7007.jpeg" height="400">
+  <img src="img/IMG_7009.jpeg" height="400">   <img src="img/IMG_7007.jpeg" height="400">
 
 
 
@@ -45,7 +45,7 @@ It sends users new words every day, generates personalized mini-lessons and AI-g
     * If **yes**, the word moves up a box (reviewed less frequently).
     * If **no**, the word moves back to the first box (reviewed daily).
 
- <img src="img/IMG_7010.jpeg" height="400"><img src="img/IMG_7011.jpeg" height="400">
+  <img src="img/IMG_7010.jpeg" height="400"><img src="img/IMG_7011.jpeg" height="400">
 
 > 🔍 The Leitner system is a time-tested flashcard technique that increases retention by spacing repetition over time. You can read more about it [here](https://en.wikipedia.org/wiki/Leitner_system).
 
