@@ -26,7 +26,7 @@ It sends users new words every day, generates personalized mini-lessons and AI-g
   Users simply message the Telegram bot to get started. No registration forms, no accounts. Just say hi.
 
 * **New Words Daily:**
-  Each day, three random English words are selected for every user at three different times. For each word:
+  Each day, three random English words are selected for every user at different schaduled times. For each word:
 
   * An educational text is generated using OpenAI's API.
   * An AI-generated image is created to support visual memory.
@@ -66,7 +66,15 @@ Here’s a breakdown of the tech:
 * **VPS server** with manual setup (Linux, security, services)
 * **Domain and SSL** provided via **ArvanCloud**
 
-<img src="img/IMG_7012.png" >
+## Main Driver
+<img src="img/main.png" >
+
+## Module: New Word
+<img src="img/newWord.png" >
+
+## Module: Rwview Words
+<img src="img/reviewWord.png" >
+
 
 Everything runs on my own infrastructure, giving me full control and the ability to scale or customize anytime I want.
 
