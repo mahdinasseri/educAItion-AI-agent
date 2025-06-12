@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -32,
-        -135
+        -420,
+        120
       ],
       "credentials": {
         "openAiApi": {
@@ -23,15 +23,15 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
+        "chatId": "={{ $('Customer Merger').item.json.chatID }}",
         "text": "=\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output : $('Select New Word').item.json.definition\n}} ",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        476,
-        -680
+        672,
+        -475
       ],
       "id": "a10320fc-a96c-4091-84e1-3066a08b3155",
       "name": "Telegram",
@@ -52,8 +52,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -780,
-        -605
+        -740,
+        -400
       ],
       "id": "3c232570-9f3e-42de-b561-f6e8065c1fed",
       "name": "Select New Word",
@@ -73,8 +73,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1660,
-        555
+        -1180,
+        100
       ],
       "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
       "name": "Get All Users",
@@ -98,7 +98,7 @@
           "values": [
             {
               "column": "user_id",
-              "value": "={{ $('UserInfo').item.json.id }}"
+              "value": "={{ $('Customer Merger').item.json.id }}"
             },
             {
               "column": "word_id",
@@ -115,8 +115,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        696,
-        -455
+        892,
+        -175
       ],
       "id": "db19b4f8-caf1-45b8-abd9-272442ebe3b8",
       "name": "Insert in user_words",
@@ -140,8 +140,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -120,
-        -355
+        76,
+        -100
       ]
     },
     {
@@ -166,8 +166,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        555
+        -1400,
+        100
       ],
       "id": "a2c277c2-1d50-40bd-b542-d1fed52caa06",
       "name": "Schedule Trigger"
@@ -200,8 +200,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -560,
-        -605
+        -520,
+        -400
       ],
       "id": "f9d403d7-814b-4817-a722-4bbca978b49d",
       "name": "If"
@@ -232,8 +232,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        256,
-        -305
+        452,
+        -50
       ],
       "id": "4a97a174-549a-4b86-9a24-787df7d394e0",
       "name": "Insert in word definitions",
@@ -254,8 +254,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        -305
+        -1620,
+        -600
       ],
       "id": "0fa31376-6f76-425e-95d5-2bc01f44b0b4",
       "name": "Telegram Trigger",
@@ -299,8 +299,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1220,
-        -560
+        -520,
+        -700
       ],
       "id": "f3664aae-2c48-4b21-aa95-44a5d47c5fa4",
       "name": "Add new User",
@@ -313,6 +313,61 @@
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * from customers where chatID = {{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -960,
+        -700
+      ],
+      "id": "b5e4030c-9367-4d7b-a139-b4c24eaf1b13",
+      "name": "Add new User1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1641c42-f526-4a95-9c48-873c1e84693d",
+              "leftValue": "={{ $json.chatID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -740,
+        -700
+      ],
+      "id": "4908b14e-e4bd-4e71-aebd-130a3c66741c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
         "resource": "image",
         "prompt": "=A realistic, educational illustration to teach the word '{{ $json.word }}'. The scene should clearly and memorably represent the meaning of the word for language learners. Use simple composition, limited color palette, and no unnecessary detail. Format: square aspect ratio, optimized for a file size under 100KB. Clean background, easily recognizable elements.",
         "options": {}
@@ -320,8 +375,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -340,
-        -755
+        -222,
+        -500
       ],
       "id": "9adcb109-b41f-4c27-a8c2-e4ef4a370969",
       "name": "OpenAI",
@@ -341,8 +396,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        -42,
-        -755
+        154,
+        -500
       ],
       "id": "0aadb484-ae46-4cba-9a03-f690a7652041",
       "name": "Read/Write Files from Disk"
@@ -355,8 +410,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        256,
-        -755
+        452,
+        -500
       ],
       "id": "b9f5e666-bedc-43df-b3b4-397ba4ad7643",
       "name": "Merge1"
@@ -369,8 +424,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        696,
-        -780
+        892,
+        -525
       ],
       "id": "756a95b8-54a0-4cb4-a8ca-3b6ed9bd99f2",
       "name": "Read/Write Files from Disk1"
@@ -379,6 +434,28 @@
       "parameters": {
         "rules": {
           "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c628d7a2-a003-42bc-987b-0addcab3cf8d"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
             {
               "conditions": {
                 "options": {
@@ -431,23 +508,36 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -1000,
-        -205
+        -1180,
+        -600
       ],
       "id": "fe68a56a-6c1a-4bd2-a833-b5cee667de25",
       "name": "Switch"
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT count(*) have_user from customers where chatID = {{ $json.message.chat.id }}",
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "customers",
+          "mode": "list",
+          "cachedResultName": "customers"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "chatID",
+              "value": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1660,
-        -305
+        -1400,
+        -600
       ],
       "id": "7e1f91ae-fd1c-42d8-b344-fa2bc1c03453",
       "name": "Which User",
@@ -459,9 +549,20 @@
       }
     },
     {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -960,
+        -400
+      ],
+      "id": "6c22be1a-2dfb-4893-a47a-6303c089c694",
+      "name": "Customer Merger"
+    },
+    {
       "parameters": {
         "operation": "sendPhoto",
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
+        "chatId": "={{ $('Customer Merger').item.json.chatID }}",
         "binaryData": true,
         "additionalFields": {
           "caption": "={{ $('Select New Word').item.json.word }}"
@@ -470,8 +571,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        916,
-        -780
+        1112,
+        -525
       ],
       "id": "4a194077-1ccc-4ba6-bcf8-e53b2fa69e1a",
       "name": "Telegram - Send Image",
@@ -486,14 +587,14 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "=Welcome {{ $('Telegram Trigger').item.json.message.from.first_name }}\ncommand /newword to start",
+        "text": "Welcome, \\n command /newword to start",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        -560
+        -222,
+        -700
       ],
       "id": "5a0f742a-aa91-45af-9aba-0455a567651e",
       "name": "Welcome mEssage",
@@ -518,21 +619,21 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -120,
-        295
+        -300,
+        575
       ]
     },
     {
       "parameters": {
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
+        "chatId": "={{ $('Customer Merger1').item.json.chatID }}",
         "text": "={{ $json.output }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        340,
-        400
+        154,
+        575
       ],
       "id": "fec6c1a6-9ab8-4aef-b834-751ebdca5fcf",
       "name": "Telegram1",
@@ -574,8 +675,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        1732,
-        -230
+        1708,
+        200
       ],
       "id": "b3bc6ce4-ac84-4e4e-8f36-dfebad13539a",
       "name": "Insert Reviewed Words in user_words2",
@@ -595,8 +696,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        920,
-        -100
+        892,
+        175
       ],
       "id": "13f301d2-081a-43a4-bc75-604147f4e9d9",
       "name": "Loop Over Items"
@@ -610,8 +711,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1732,
-        20
+        1780,
+        500
       ],
       "id": "73c997da-1b25-485b-8619-e1dff46b4db3",
       "name": "Telegram3",
@@ -636,8 +737,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1356,
-        -205
+        1400,
+        480
       ]
     },
     {
@@ -649,8 +750,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -560,
-        120
+        -740,
+        325
       ],
       "id": "bc218ca7-dc2b-4e3e-9a16-bea72e7e3f15",
       "name": "Load Review words",
@@ -678,8 +779,8 @@
       "type": "n8n-nodes-base.summarize",
       "typeVersion": 1.1,
       "position": [
-        -340,
-        220
+        -520,
+        500
       ],
       "id": "677bd8fb-172e-4135-8507-1c99ba614f8b",
       "name": "Summarize"
@@ -691,8 +792,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1136,
-        -230
+        1120,
+        520
       ],
       "id": "0d5238f9-c9f4-4f0e-af83-a00c7bd0fe07",
       "name": "Merge3"
@@ -723,8 +824,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        815
+        -1400,
+        475
       ],
       "id": "3d35686d-f586-4a9e-8585-0f8ad04bc2e8",
       "name": "Schedule Trigger1"
@@ -751,8 +852,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1660,
-        815
+        -1180,
+        475
       ],
       "id": "15537d4e-b5f1-495c-a8c5-4197ffbabd58",
       "name": "MySQL",
@@ -766,7 +867,7 @@
     {
       "parameters": {
         "operation": "sendAndWait",
-        "chatId": "={{ $json.chatID }}",
+        "chatId": "={{ $('Customer Merger1').item.json.chatID }}",
         "message": "=Box {{ $json.box }}: Do you remember **{{ $json.word }}**?",
         "approvalOptions": {
           "values": {
@@ -786,8 +887,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1136,
-        -530
+        1112,
+        25
       ],
       "id": "46b4b55e-06a9-4d9e-9b26-3cdadeb015dc",
       "name": "Telegram2",
@@ -806,8 +907,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        476,
-        -105
+        452,
+        175
       ],
       "id": "f20f139e-11ba-44a7-8620-0b63e9b1e005",
       "name": "Merge"
@@ -820,8 +921,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        696,
-        -105
+        672,
+        175
       ],
       "id": "b31a8e34-d53b-45f3-9fd5-0b206b60106c",
       "name": "Split Out"
@@ -836,8 +937,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        1444,
-        15
+        560,
+        1000
       ],
       "credentials": {
         "openAiApi": {
@@ -873,65 +974,22 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1434,
-        -505
+        1410,
+        125
       ],
       "id": "3dce5fe2-4b6e-41bd-892a-653b4c712629",
       "name": "If2"
     },
     {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "d1641c42-f526-4a95-9c48-873c1e84693d",
-              "leftValue": "={{ $json.have_user }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
       "position": [
-        -1440,
-        -305
+        -960,
+        325
       ],
-      "id": "1e2ca5d1-4d1c-4000-8e4e-142596f901dd",
-      "name": "If3"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT *  from customers where chatID = {{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.mySql",
-      "typeVersion": 2.4,
-      "position": [
-        -1220,
-        -205
-      ],
-      "id": "dfe3df52-3db3-45f6-80ab-74a56f15cef7",
-      "name": "UserInfo",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
+      "id": "6218f2af-7149-4549-a0cc-157e99a1c3a0",
+      "name": "Customer Merger1"
     }
   ],
   "pinData": {},
@@ -976,7 +1034,13 @@
     },
     "Get All Users": {
       "main": [
-        []
+        [
+          {
+            "node": "Customer Merger",
+            "type": "main",
+            "index": 1
+          }
+        ]
       ]
     },
     "Agent New Word": {
@@ -1051,6 +1115,29 @@
         ]
       ]
     },
+    "Add new User1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Add new User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "OpenAI": {
       "main": [
         [
@@ -1099,14 +1186,21 @@
       "main": [
         [
           {
-            "node": "Select New Word",
+            "node": "Add new User1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Load Review words",
+            "node": "Customer Merger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Customer Merger1",
             "type": "main",
             "index": 0
           }
@@ -1117,7 +1211,18 @@
       "main": [
         [
           {
-            "node": "If3",
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Merger": {
+      "main": [
+        [
+          {
+            "node": "Select New Word",
             "type": "main",
             "index": 0
           }
@@ -1242,7 +1347,13 @@
     },
     "MySQL": {
       "main": [
-        []
+        [
+          {
+            "node": "Customer Merger1",
+            "type": "main",
+            "index": 1
+          }
+        ]
       ]
     },
     "Telegram2": {
@@ -1312,29 +1423,11 @@
         ]
       ]
     },
-    "If3": {
+    "Customer Merger1": {
       "main": [
         [
           {
-            "node": "Add new User",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "UserInfo",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "UserInfo": {
-      "main": [
-        [
-          {
-            "node": "Switch",
+            "node": "Load Review words",
             "type": "main",
             "index": 0
           }
@@ -1348,7 +1441,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "3876b3b5-38b7-49a4-b9e0-964efb37e4fd",
+  "versionId": "2506a35f-9d5e-402b-b082-93c8e49b845a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

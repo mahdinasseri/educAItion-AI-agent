@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -32,
-        -135
+        -100,
+        900
       ],
       "credentials": {
         "openAiApi": {
@@ -23,15 +23,15 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
+        "chatId": "={{ $('Customer Merger').item.json.chatID }}",
         "text": "=\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output : $('Select New Word').item.json.definition\n}} ",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        476,
-        -680
+        734,
+        -395
       ],
       "id": "a10320fc-a96c-4091-84e1-3066a08b3155",
       "name": "Telegram",
@@ -52,8 +52,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -780,
-        -605
+        -600,
+        -320
       ],
       "id": "3c232570-9f3e-42de-b561-f6e8065c1fed",
       "name": "Select New Word",
@@ -73,8 +73,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1660,
-        555
+        -1160,
+        -200
       ],
       "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
       "name": "Get All Users",
@@ -98,7 +98,7 @@
           "values": [
             {
               "column": "user_id",
-              "value": "={{ $('UserInfo').item.json.id }}"
+              "value": "={{ $('Customer Merger').item.json.id }}"
             },
             {
               "column": "word_id",
@@ -115,8 +115,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        696,
-        -455
+        1032,
+        -70
       ],
       "id": "db19b4f8-caf1-45b8-abd9-272442ebe3b8",
       "name": "Insert in user_words",
@@ -140,9 +140,48 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -120,
-        -355
+        60,
+        -120
       ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.concatenated_word }}",
+        "options": {
+          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n"
+        }
+      },
+      "id": "096d5fa5-77a4-4491-8199-5522ce577403",
+      "name": "Agent Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        656,
+        555
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Finalized Selecred words for review').item.json.chatID }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1032,
+        555
+      ],
+      "id": "bc31c677-468e-4121-9b27-486102a97952",
+      "name": "Telegram1",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -166,11 +205,32 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        555
+        -1380,
+        -200
       ],
       "id": "a2c277c2-1d50-40bd-b542-d1fed52caa06",
       "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select id,name,chatID from customers",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -1140,
+        540
+      ],
+      "id": "465fc683-1fe9-4d19-9f5f-2ed8d9587a27",
+      "name": "Get All Users1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
     },
     {
       "parameters": {
@@ -200,8 +260,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -560,
-        -605
+        -380,
+        -320
       ],
       "id": "f9d403d7-814b-4817-a722-4bbca978b49d",
       "name": "If"
@@ -232,8 +292,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        256,
-        -305
+        436,
+        55
       ],
       "id": "4a97a174-549a-4b86-9a24-787df7d394e0",
       "name": "Insert in word definitions",
@@ -246,6 +306,99 @@
     },
     {
       "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Customer Merger1').item.json.chatID }}",
+        "message": "=Box {{ $json.box }}: Do you remember **{{ $json.word }}**?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Yes I do.",
+            "disapproveLabel": "❌ No I did not."
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 6
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1860,
+        300
+      ],
+      "id": "0dbf7d69-5963-4ca7-bab4-59e420972348",
+      "name": "Telegram2",
+      "webhookId": "59615702-b17d-4591-91c7-9ca3deced69c",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_words",
+          "mode": "list",
+          "cachedResultName": "user_words"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('Customer Merger1').item.json.id }}"
+            },
+            {
+              "column": "word_id",
+              "value": "="
+            },
+            {
+              "column": "box",
+              "value": "={{$json.data.approved==true ? $('Merge2').item.json.box + 1 : 1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        2220,
+        420
+      ],
+      "id": "672acfb6-3ee4-4ac8-9544-9c1e572fe79e",
+      "name": "Insert Reviewed Words in user_words2",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        205
+      ],
+      "id": "4ee4c4b4-3745-47be-9e08-c1b080a1722c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
         "updates": [
           "message"
         ],
@@ -254,8 +407,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        -305
+        -1480,
+        -520
       ],
       "id": "0fa31376-6f76-425e-95d5-2bc01f44b0b4",
       "name": "Telegram Trigger",
@@ -299,8 +452,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1220,
-        -560
+        -380,
+        -620
       ],
       "id": "f3664aae-2c48-4b21-aa95-44a5d47c5fa4",
       "name": "Add new User",
@@ -313,6 +466,83 @@
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * from customers where chatID = {{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -820,
+        -620
+      ],
+      "id": "b5e4030c-9367-4d7b-a139-b4c24eaf1b13",
+      "name": "Add new User1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1641c42-f526-4a95-9c48-873c1e84693d",
+              "leftValue": "={{ $json.chatID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -600,
+        -620
+      ],
+      "id": "4908b14e-e4bd-4e71-aebd-130a3c66741c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Customer Merger1').item.json.chatID }}",
+        "text": "=Today's Words for Review:\n{{ $json.output }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        -45
+      ],
+      "id": "ea2091c6-f1c0-4639-a1e7-c52763e14062",
+      "name": "Telegram3",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "resource": "image",
         "prompt": "=A realistic, educational illustration to teach the word '{{ $json.word }}'. The scene should clearly and memorably represent the meaning of the word for language learners. Use simple composition, limited color palette, and no unnecessary detail. Format: square aspect ratio, optimized for a file size under 100KB. Clean background, easily recognizable elements.",
         "options": {}
@@ -320,8 +550,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -340,
-        -755
+        -160,
+        -420
       ],
       "id": "9adcb109-b41f-4c27-a8c2-e4ef4a370969",
       "name": "OpenAI",
@@ -341,8 +571,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        -42,
-        -755
+        138,
+        -420
       ],
       "id": "0aadb484-ae46-4cba-9a03-f690a7652041",
       "name": "Read/Write Files from Disk"
@@ -355,8 +585,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        256,
-        -755
+        436,
+        -420
       ],
       "id": "b9f5e666-bedc-43df-b3b4-397ba4ad7643",
       "name": "Merge1"
@@ -369,8 +599,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        696,
-        -780
+        1032,
+        -445
       ],
       "id": "756a95b8-54a0-4cb4-a8ca-3b6ed9bd99f2",
       "name": "Read/Write Files from Disk1"
@@ -379,6 +609,28 @@
       "parameters": {
         "rules": {
           "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c628d7a2-a003-42bc-987b-0addcab3cf8d"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
             {
               "conditions": {
                 "options": {
@@ -431,23 +683,36 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -1000,
-        -205
+        -1040,
+        -520
       ],
       "id": "fe68a56a-6c1a-4bd2-a833-b5cee667de25",
       "name": "Switch"
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT count(*) have_user from customers where chatID = {{ $json.message.chat.id }}",
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "customers",
+          "mode": "list",
+          "cachedResultName": "customers"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "chatID",
+              "value": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1660,
-        -305
+        -1260,
+        -520
       ],
       "id": "7e1f91ae-fd1c-42d8-b344-fa2bc1c03453",
       "name": "Which User",
@@ -459,9 +724,20 @@
       }
     },
     {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -820,
+        -320
+      ],
+      "id": "6c22be1a-2dfb-4893-a47a-6303c089c694",
+      "name": "Customer Merger"
+    },
+    {
       "parameters": {
         "operation": "sendPhoto",
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
+        "chatId": "={{ $('Customer Merger').item.json.chatID }}",
         "binaryData": true,
         "additionalFields": {
           "caption": "={{ $('Select New Word').item.json.word }}"
@@ -470,8 +746,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        916,
-        -780
+        1252,
+        -445
       ],
       "id": "4a194077-1ccc-4ba6-bcf8-e53b2fa69e1a",
       "name": "Telegram - Send Image",
@@ -484,16 +760,27 @@
       }
     },
     {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -760,
+        120
+      ],
+      "id": "92d09657-326c-43b2-a356-928dee6dab1e",
+      "name": "Customer Merger1"
+    },
+    {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "=Welcome {{ $('Telegram Trigger').item.json.message.from.first_name }}\ncommand /newword to start",
+        "text": "Welcome, \\n command /newword to start",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        -560
+        -160,
+        -620
       ],
       "id": "5a0f742a-aa91-45af-9aba-0455a567651e",
       "name": "Welcome mEssage",
@@ -510,149 +797,31 @@
         "promptType": "define",
         "text": "={{ $json.concatenated_word }}",
         "options": {
-          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n"
-        }
-      },
-      "id": "b4b4f47d-bdda-4b3a-90b7-50148bc11e3e",
-      "name": "Agent Review",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [
-        -120,
-        295
-      ]
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('UserInfo').item.json.chatID }}",
-        "text": "={{ $json.output }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        340,
-        400
-      ],
-      "id": "fec6c1a6-9ab8-4aef-b834-751ebdca5fcf",
-      "name": "Telegram1",
-      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
-      "credentials": {
-        "telegramApi": {
-          "id": "j06hYjEcJBs3NRO4",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "table": {
-          "__rl": true,
-          "value": "user_words",
-          "mode": "list",
-          "cachedResultName": "user_words"
-        },
-        "dataMode": "defineBelow",
-        "valuesToSend": {
-          "values": [
-            {
-              "column": "user_id",
-              "value": "={{ $('Split Out').item.json.user_id }}"
-            },
-            {
-              "column": "word_id",
-              "value": "={{ $('Split Out').item.json.word_id }}"
-            },
-            {
-              "column": "box",
-              "value": "={{$json.data.approved==true ? $('Split Out').item.json.box + 1 : 1 }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.mySql",
-      "typeVersion": 2.4,
-      "position": [
-        1732,
-        -230
-      ],
-      "id": "b3bc6ce4-ac84-4e4e-8f36-dfebad13539a",
-      "name": "Insert Reviewed Words in user_words2",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {
-          "reset": false
-        }
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        920,
-        -100
-      ],
-      "id": "13f301d2-081a-43a4-bc75-604147f4e9d9",
-      "name": "Loop Over Items"
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('Summarize').item.json.chatID }}",
-        "text": "=Today's Words for Review:\n{{ $json.output }}\n",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1732,
-        20
-      ],
-      "id": "73c997da-1b25-485b-8619-e1dff46b4db3",
-      "name": "Telegram3",
-      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
-      "credentials": {
-        "telegramApi": {
-          "id": "j06hYjEcJBs3NRO4",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.concatenated_word }}",
-        "options": {
           "systemMessage": "=you are an english teacher.\ngive definitions of these words, one-by-one, each in one line\nobjective: leaarn me the meaning of words.\n\n"
         }
       },
-      "id": "3e5b3e1d-794f-4cd0-a88a-e070e20181b0",
+      "id": "654f6919-121b-4003-b6e8-3ed26ee7d355",
       "name": "All Definition Review words",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        1356,
-        -205
+        1920,
+        -40
       ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.id }}\n)\nSELECT \n  w.word,\n  ruw.user_id, \n  c.chatID,\n  ruw.word_id, \n  ruw.box AS box,\n  CASE\n    WHEN DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, box - 1) THEN '0-scheduled'\n    ELSE '1-random'\n  END AS method\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\norder by method, rand()\nlimit 7;\n",
+        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.id }}\n    \n  \n)\nSELECT \n  w.word,\n  ruw.user_id, \n  c.chatID,\n  ruw.word_id, \n  ruw.box AS box,\n  CASE\n    WHEN DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, box - 1) THEN '0-scheduled'\n    ELSE '1-random'\n  END AS method\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\norder by method, rand()\nlimit 7;\n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -560,
-        120
+        -760,
+        540
       ],
-      "id": "bc218ca7-dc2b-4e3e-9a16-bea72e7e3f15",
+      "id": "47293eff-0faf-45e3-8aae-12844bf1be89",
       "name": "Load Review words",
       "credentials": {
         "mySql": {
@@ -672,17 +841,65 @@
             }
           ]
         },
-        "fieldsToSplitBy": "user_id, chatID",
+        "fieldsToSplitBy": "user_id",
         "options": {}
       },
       "type": "n8n-nodes-base.summarize",
       "typeVersion": 1.1,
       "position": [
-        -340,
-        220
+        160,
+        480
       ],
-      "id": "677bd8fb-172e-4135-8507-1c99ba614f8b",
+      "id": "d468638b-c3b7-4261-925e-27c807d63888",
       "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "useDataOfInput": 2
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        640,
+        280
+      ],
+      "id": "3184cc4b-1f71-4eac-bc99-d673f5c69c80",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "70c2696a-74c4-4468-9446-66352b163f2d",
+              "leftValue": "={{ $('Select Review Random Words').item.json.word }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        200
+      ],
+      "id": "4b39fe52-f6f8-4bda-a121-72393bb2b08c",
+      "name": "If2"
     },
     {
       "parameters": {
@@ -691,26 +908,46 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1136,
-        -230
+        1660,
+        -200
       ],
-      "id": "0d5238f9-c9f4-4f0e-af83-a00c7bd0fe07",
+      "id": "0e2d10b5-5a8a-4f02-94c4-f83daa2f338d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1700,
+        40
+      ],
+      "id": "70e473db-2c1c-437c-83b8-d5654b7947db",
       "name": "Merge3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -500,
+        -80
+      ],
+      "id": "df3346c0-ddc0-4e2d-8bd3-c2717904c33c",
+      "name": "Merge5"
     },
     {
       "parameters": {
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 10,
+              "triggerAtHour": 9,
               "triggerAtMinute": 30
             },
             {
               "triggerAtHour": 12,
-              "triggerAtMinute": 30
-            },
-            {
-              "triggerAtHour": 16,
               "triggerAtMinute": 30
             },
             {
@@ -723,215 +960,11 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1880,
-        815
-      ],
-      "id": "3d35686d-f586-4a9e-8585-0f8ad04bc2e8",
-      "name": "Schedule Trigger1"
-    },
-    {
-      "parameters": {
-        "operation": "select",
-        "table": {
-          "__rl": true,
-          "value": "customers",
-          "mode": "list",
-          "cachedResultName": "customers"
-        },
-        "where": {
-          "values": [
-            {
-              "column": "chatID",
-              "condition": "IS NOT NULL"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.mySql",
-      "typeVersion": 2.4,
-      "position": [
-        -1660,
-        815
-      ],
-      "id": "15537d4e-b5f1-495c-a8c5-4197ffbabd58",
-      "name": "MySQL",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "sendAndWait",
-        "chatId": "={{ $json.chatID }}",
-        "message": "=Box {{ $json.box }}: Do you remember **{{ $json.word }}**?",
-        "approvalOptions": {
-          "values": {
-            "approvalType": "double",
-            "approveLabel": "✅ Yes I do.",
-            "disapproveLabel": "❌ No I did not."
-          }
-        },
-        "options": {
-          "limitWaitTime": {
-            "values": {
-              "resumeAmount": 6
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1136,
-        -530
-      ],
-      "id": "46b4b55e-06a9-4d9e-9b26-3cdadeb015dc",
-      "name": "Telegram2",
-      "webhookId": "59615702-b17d-4591-91c7-9ca3deced69c",
-      "credentials": {
-        "telegramApi": {
-          "id": "j06hYjEcJBs3NRO4",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "mode": "chooseBranch"
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        476,
-        -105
-      ],
-      "id": "f20f139e-11ba-44a7-8620-0b63e9b1e005",
-      "name": "Merge"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "word, user_id, chatID, box, method, word_id",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        696,
-        -105
-      ],
-      "id": "b31a8e34-d53b-45f3-9fd5-0b206b60106c",
-      "name": "Split Out"
-    },
-    {
-      "parameters": {
-        "model": "gpt-4.1",
-        "options": {}
-      },
-      "id": "f7f3ee13-fca1-49ef-9d90-8854da0c0dbd",
-      "name": "OpenAI Model1",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1,
-      "position": [
-        1444,
-        15
-      ],
-      "credentials": {
-        "openAiApi": {
-          "id": "3AAHNy1d6f7hmvmG",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "8e997606-4689-4541-9820-7da8ef6a62ed",
-              "leftValue": "={{ $('Split Out').item.json.method }}",
-              "rightValue": "0-schadule",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        1434,
-        -505
-      ],
-      "id": "3dce5fe2-4b6e-41bd-892a-653b4c712629",
-      "name": "If2"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "d1641c42-f526-4a95-9c48-873c1e84693d",
-              "leftValue": "={{ $json.have_user }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
         -1440,
-        -305
+        500
       ],
-      "id": "1e2ca5d1-4d1c-4000-8e4e-142596f901dd",
-      "name": "If3"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT *  from customers where chatID = {{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.mySql",
-      "typeVersion": 2.4,
-      "position": [
-        -1220,
-        -205
-      ],
-      "id": "dfe3df52-3db3-45f6-80ab-74a56f15cef7",
-      "name": "UserInfo",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
+      "id": "d67e66e5-6e0b-4854-a27d-eab4bdead672",
+      "name": "Schedule Trigger1"
     }
   ],
   "pinData": {},
@@ -941,6 +974,16 @@
         [
           {
             "node": "Agent New Word",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "All Definition Review words",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -976,7 +1019,13 @@
     },
     "Get All Users": {
       "main": [
-        []
+        [
+          {
+            "node": "Customer Merger",
+            "type": "main",
+            "index": 1
+          }
+        ]
       ]
     },
     "Agent New Word": {
@@ -995,6 +1044,28 @@
         ]
       ]
     },
+    "Agent Review": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Schedule Trigger": {
       "main": [
         [
@@ -1002,6 +1073,17 @@
             "node": "Get All Users",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Users1": {
+      "main": [
+        [
+          {
+            "node": "Customer Merger1",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -1029,6 +1111,46 @@
         ]
       ]
     },
+    "Telegram2": {
+      "main": [
+        [
+          {
+            "node": "Insert Reviewed Words in user_words2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Reviewed Words in user_words2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Telegram Trigger": {
       "main": [
         [
@@ -1045,6 +1167,29 @@
         [
           {
             "node": "Welcome mEssage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add new User1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Add new User",
             "type": "main",
             "index": 0
           }
@@ -1099,14 +1244,21 @@
       "main": [
         [
           {
-            "node": "Select New Word",
+            "node": "Add new User1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Load Review words",
+            "node": "Customer Merger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Customer Merger1",
             "type": "main",
             "index": 0
           }
@@ -1117,58 +1269,29 @@
       "main": [
         [
           {
-            "node": "If3",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Agent Review": {
+    "Customer Merger": {
       "main": [
         [
           {
-            "node": "Telegram1",
+            "node": "Select New Word",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Telegram1": {
+    "Customer Merger1": {
       "main": [
         [
           {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Insert Reviewed Words in user_words2": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items": {
-      "main": [
-        [
-          {
-            "node": "Merge3",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Telegram2",
+            "node": "Load Review words",
             "type": "main",
             "index": 0
           }
@@ -1190,12 +1313,12 @@
       "main": [
         [
           {
-            "node": "Summarize",
+            "node": "Finalized Selecred words for review",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Merge",
+            "node": "Summarize",
             "type": "main",
             "index": 0
           }
@@ -1211,7 +1334,52 @@
             "index": 0
           },
           {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "All Definition Review words",
             "type": "main",
             "index": 0
           }
@@ -1233,108 +1401,7 @@
       "main": [
         [
           {
-            "node": "MySQL",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MySQL": {
-      "main": [
-        []
-      ]
-    },
-    "Telegram2": {
-      "main": [
-        [
-          {
-            "node": "If2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge": {
-      "main": [
-        [
-          {
-            "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Split Out": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Agent Review",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
-            "node": "All Definition Review words",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If2": {
-      "main": [
-        [
-          {
-            "node": "Insert Reviewed Words in user_words2",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If3": {
-      "main": [
-        [
-          {
-            "node": "Add new User",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "UserInfo",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "UserInfo": {
-      "main": [
-        [
-          {
-            "node": "Switch",
+            "node": "Get All Users1",
             "type": "main",
             "index": 0
           }
@@ -1342,13 +1409,13 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "3876b3b5-38b7-49a4-b9e0-964efb37e4fd",
+  "versionId": "d3c81602-6f55-433f-9982-901c9ca981df",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
