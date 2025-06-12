@@ -1,0 +1,538 @@
+{
+  "name": "educAItion - reviewWords",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.concatenated_word }}",
+        "options": {
+          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1–2 short paragraphs for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Bold each target word exactly once when used in the text.\n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n7. Avoid using any word more than once in bold.\n8. End the passage with a learner-friendly question or thought to reflect on.\n"
+        }
+      },
+      "id": "3f572d1a-9298-4d1c-8f3e-55b55969d1a4",
+      "name": "Agent Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        20
+      ],
+      "id": "ff5bac8b-48e5-41ca-b510-e847225c379f",
+      "name": "Telegram1",
+      "webhookId": "e0b464d8-2f27-401d-8263-0e31622dfb7a",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_words",
+          "mode": "list",
+          "cachedResultName": "user_words"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('Split Out').item.json.user_id }}"
+            },
+            {
+              "column": "word_id",
+              "value": "={{ $('Split Out').item.json.word_id }}"
+            },
+            {
+              "column": "box",
+              "value": "={{$json.data.approved==true ? $('Split Out').item.json.box + 1 : 1 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        1620,
+        640
+      ],
+      "id": "78bb3c49-cf85-43a8-973f-56a1e345b125",
+      "name": "Insert Reviewed Words in user_words2",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        776,
+        185
+      ],
+      "id": "28e4f5b6-0ef0-4dc0-909a-21a3da97ab8b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Summarize').item.json.chatID }}",
+        "text": "=Today's Words for Review:\n{{ $json.output }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1592,
+        60
+      ],
+      "id": "af5690ec-a3ef-41fb-ab0b-a13243c1882c",
+      "name": "Telegram3",
+      "webhookId": "33e5c944-d49a-45fb-81f3-b257abcda2ef",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.concatenated_word }}",
+        "options": {
+          "systemMessage": "=you are an english teacher.\ngive definitions of these words, one-by-one, each in one line\nobjective: leaarn me the meaning of words.\n\n"
+        }
+      },
+      "id": "3a303721-180b-4ffa-ad99-24aa0b066e65",
+      "name": "All Definition Review words",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1216,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.user_id }}\n)\nSELECT \n  w.word,\n  ruw.user_id, \n  c.chatID,\n  ruw.word_id, \n  ruw.box AS box,\n  CASE\n    WHEN DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, box - 1) THEN '0-scheduled'\n    ELSE '1-random'\n  END AS method\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\norder by method, rand()\nlimit 7;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -700,
+        285
+      ],
+      "id": "5597b3d0-7c87-4e54-a66c-5b2bf3c9bef6",
+      "name": "Load Review words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "word",
+              "separateBy": ", "
+            }
+          ]
+        },
+        "fieldsToSplitBy": "user_id, chatID",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -180
+      ],
+      "id": "314c4c57-f267-4361-940f-45a1c870d331",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1020,
+        20
+      ],
+      "id": "51c0d5a1-8a9c-4a75-8003-cabe08eef99c",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "message": "=Box {{ $json.box }}: Do you remember **{{ $json.word }}**?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Yes I do.",
+            "disapproveLabel": "❌ No I did not."
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeAmount": 6
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1020,
+        460
+      ],
+      "id": "e06f5717-b3a9-4b3e-a8ab-2aea7870eb51",
+      "name": "Telegram2",
+      "webhookId": "5c4a1dc9-5dda-4a28-95bf-2d93cb8327d0",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        185
+      ],
+      "id": "075d7000-848d-4dae-b408-f75d2805cb7b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "word, user_id, chatID, box, method, word_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        556,
+        185
+      ],
+      "id": "989d07f6-66f9-40f7-b593-625d8a886069",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "id": "38875762-7730-410c-8627-0568fbbb8b9f",
+      "name": "OpenAI Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1304,
+        280
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8e997606-4689-4541-9820-7da8ef6a62ed",
+              "leftValue": "={{ $('Split Out').item.json.method }}",
+              "rightValue": "0-schadule",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        520
+      ],
+      "id": "48451dae-77fa-435a-93a4-b1f71d680722",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user_id",
+              "type": "number"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        285
+      ],
+      "id": "4462eae1-eb7a-4360-b59e-b065813cc368",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Agent Review": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Insert Reviewed Words in user_words2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Definition Review words": {
+      "main": [
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Review words": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "All Definition Review words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "All Definition Review words",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Insert Reviewed Words in user_words2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Load Review words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "52f7a2af-476f-412b-8809-cac7f783ce77",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "KoRD4FVaBuf90Plh",
+  "tags": []
+}

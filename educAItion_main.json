@@ -1,5 +1,5 @@
 {
-  "name": "EducAItion",
+  "name": "educAItion-main",
   "nodes": [
     {
       "parameters": {
@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -2120,
-        -460
+        -660,
+        100
       ],
-      "id": "0fa31376-6f76-425e-95d5-2bc01f44b0b4",
+      "id": "8631f272-62c1-4e24-95d3-70b9f3c7fd31",
       "name": "Telegram Trigger",
       "webhookId": "04cf13b3-4366-4812-a29e-95ed04216493",
       "credentials": {
@@ -56,10 +56,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1460,
-        -560
+        0,
+        0
       ],
-      "id": "f3664aae-2c48-4b21-aa95-44a5d47c5fa4",
+      "id": "4712cf79-f2d7-4fc8-baf4-dce9690b45c1",
       "name": "Add new User",
       "credentials": {
         "mySql": {
@@ -90,10 +90,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -2120,
-        260
+        -660,
+        820
       ],
-      "id": "a2c277c2-1d50-40bd-b542-d1fed52caa06",
+      "id": "43f81f41-b6a6-451c-b065-74ece910e0fe",
       "name": "Schedule Trigger"
     },
     {
@@ -153,10 +153,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1680,
-        260
+        -220,
+        820
       ],
-      "id": "82b9473d-b66e-431c-82ad-174ae360d6d0",
+      "id": "306d0589-7df2-4eb7-947e-67b4bc2ed6cf",
       "name": "Review Module"
     },
     {
@@ -216,10 +216,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        -260
+        440,
+        300
       ],
-      "id": "6c34634e-f958-44ad-9dc8-a4535cc378f2",
+      "id": "c15fc403-7585-4c81-874a-5e028c2c098e",
       "name": "Review Module1"
     },
     {
@@ -279,10 +279,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1020,
-        -460
+        440,
+        100
       ],
-      "id": "29f71508-af9f-4d1c-9ce4-4fb0d26fe4d5",
+      "id": "5386770e-4a5d-47ce-8061-f019f6fdf9e9",
       "name": "New word Module2"
     },
     {
@@ -342,10 +342,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -1680,
-        0
+        -220,
+        560
       ],
-      "id": "2038371e-df9b-4d7e-bf7d-4e975d77cfd7",
+      "id": "848f8d76-2a3f-4fe1-a188-695d521f76b0",
       "name": "New word Module"
     },
     {
@@ -374,10 +374,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -2120,
-        0
+        -660,
+        560
       ],
-      "id": "3d35686d-f586-4a9e-8585-0f8ad04bc2e8",
+      "id": "6212d5a5-1322-4e38-8704-596efe0a82b4",
       "name": "Schedule NewWord Trigger"
     },
     {
@@ -402,10 +402,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1900,
-        0
+        -440,
+        560
       ],
-      "id": "15537d4e-b5f1-495c-a8c5-4197ffbabd58",
+      "id": "40319362-3d6f-47cd-8bde-a918c5f5e331",
       "name": "Load All Users",
       "credentials": {
         "mySql": {
@@ -423,10 +423,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1900,
-        260
+        -440,
+        820
       ],
-      "id": "bac12b38-bdfc-414e-8e80-534c4bc8b8c8",
+      "id": "5cafe87d-8dbf-4f89-8f23-98a1e4fc58c0",
       "name": "Load All Users1",
       "credentials": {
         "mySql": {
@@ -444,10 +444,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1900,
-        -460
+        -440,
+        100
       ],
-      "id": "7e1f91ae-fd1c-42d8-b344-fa2bc1c03453",
+      "id": "df517721-a2ee-4121-a4c3-edd6bb793495",
       "name": "New User or Return",
       "credentials": {
         "mySql": {
@@ -484,10 +484,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1680,
-        -460
+        -220,
+        100
       ],
-      "id": "1e2ca5d1-4d1c-4000-8e4e-142596f901dd",
+      "id": "23dca26c-e709-445b-bbcc-0229a2795c9a",
       "name": "if New User"
     },
     {
@@ -499,10 +499,10 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -1460,
-        -360
+        0,
+        200
       ],
-      "id": "dfe3df52-3db3-45f6-80ab-74a56f15cef7",
+      "id": "0c9e5af8-f13b-44c5-8c06-06d9e8fa9d73",
       "name": "Get User",
       "credentials": {
         "mySql": {
@@ -568,10 +568,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -1240,
-        -360
+        220,
+        200
       ],
-      "id": "fe68a56a-6c1a-4bd2-a833-b5cee667de25",
+      "id": "9cd457d3-ef55-49dc-a623-94c67a049fe9",
       "name": "Command Switch"
     },
     {
@@ -583,10 +583,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1240,
-        -560
+        220,
+        0
       ],
-      "id": "5a0f742a-aa91-45af-9aba-0455a567651e",
+      "id": "4490bec0-c981-4328-a355-81722a0dcfd7",
       "name": "Welcome Message",
       "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
       "credentials": {
@@ -708,7 +708,6 @@
     "Command Switch": {
       "main": [
         [
-          
           {
             "node": "New word Module2",
             "type": "main",
@@ -723,24 +722,16 @@
           }
         ]
       ]
-    },
-    "Welcome Message": {
-      "main": [
-        []
-      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "Asia/Tehran",
-    "callerPolicy": "workflowsFromSameOwner"
+    "executionOrder": "v1"
   },
-  "versionId": "6d3a62c2-4cc7-49de-b042-9650e3f402bb",
+  "versionId": "d8f13b3c-ef76-43c4-8b7e-0f9eebdef7f5",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
   },
-  "id": "w1Zvs3MMF3yljVfk",
+  "id": "2dOVO8IzjouQ8snu",
   "tags": []
 }
