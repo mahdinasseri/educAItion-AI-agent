@@ -71,7 +71,7 @@
       "typeVersion": 2.4,
       "position": [
         1620,
-        640
+        480
       ],
       "id": "78bb3c49-cf85-43a8-973f-56a1e345b125",
       "name": "Insert Reviewed Words in user_words2",
@@ -174,8 +174,8 @@
       "type": "n8n-nodes-base.summarize",
       "typeVersion": 1.1,
       "position": [
-        -480,
-        -180
+        -500,
+        -100
       ],
       "id": "314c4c57-f267-4361-940f-45a1c870d331",
       "name": "Summarize"
@@ -188,7 +188,7 @@
       "typeVersion": 3.2,
       "position": [
         1020,
-        20
+        -260
       ],
       "id": "51c0d5a1-8a9c-4a75-8003-cabe08eef99c",
       "name": "Merge3"
@@ -216,8 +216,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1020,
-        460
+        1400,
+        360
       ],
       "id": "e06f5717-b3a9-4b3e-a8ab-2aea7870eb51",
       "name": "Telegram2",
@@ -266,8 +266,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        1304,
-        280
+        160,
+        600
       ],
       "credentials": {
         "openAiApi": {
@@ -303,8 +303,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1300,
-        520
+        1120,
+        340
       ],
       "id": "48451dae-77fa-435a-93a4-b1f71d680722",
       "name": "If2"
@@ -382,7 +382,7 @@
         ],
         [
           {
-            "node": "Telegram2",
+            "node": "If2",
             "type": "main",
             "index": 0
           }
@@ -447,7 +447,7 @@
       "main": [
         [
           {
-            "node": "If2",
+            "node": "Insert Reviewed Words in user_words2",
             "type": "main",
             "index": 0
           }
@@ -496,7 +496,7 @@
       "main": [
         [
           {
-            "node": "Insert Reviewed Words in user_words2",
+            "node": "Telegram2",
             "type": "main",
             "index": 0
           }
@@ -528,11 +528,18 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "52f7a2af-476f-412b-8809-cac7f783ce77",
+  "versionId": "a33da09e-b692-46c4-ad3e-7dd4cdf2c96b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
   },
   "id": "KoRD4FVaBuf90Plh",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-06-12T09:17:49.522Z",
+      "updatedAt": "2025-06-12T09:17:49.522Z",
+      "id": "ctP1QRHmNTJd1ue4",
+      "name": "educAItion"
+    }
+  ]
 }

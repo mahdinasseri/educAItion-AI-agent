@@ -91,7 +91,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        820
+        920
       ],
       "id": "43f81f41-b6a6-451c-b065-74ece910e0fe",
       "name": "Schedule Trigger"
@@ -154,7 +154,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        820
+        920
       ],
       "id": "306d0589-7df2-4eb7-947e-67b4bc2ed6cf",
       "name": "Review Module"
@@ -217,7 +217,7 @@
       "typeVersion": 1.2,
       "position": [
         440,
-        300
+        200
       ],
       "id": "c15fc403-7585-4c81-874a-5e028c2c098e",
       "name": "Review Module1"
@@ -280,7 +280,7 @@
       "typeVersion": 1.2,
       "position": [
         440,
-        100
+        0
       ],
       "id": "5386770e-4a5d-47ce-8061-f019f6fdf9e9",
       "name": "New word Module2"
@@ -343,7 +343,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        560
+        660
       ],
       "id": "848f8d76-2a3f-4fe1-a188-695d521f76b0",
       "name": "New word Module"
@@ -375,7 +375,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        560
+        660
       ],
       "id": "6212d5a5-1322-4e38-8704-596efe0a82b4",
       "name": "Schedule NewWord Trigger"
@@ -403,7 +403,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        560
+        660
       ],
       "id": "40319362-3d6f-47cd-8bde-a918c5f5e331",
       "name": "Load All Users",
@@ -424,7 +424,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        820
+        920
       ],
       "id": "5cafe87d-8dbf-4f89-8f23-98a1e4fc58c0",
       "name": "Load All Users1",
@@ -559,6 +559,29 @@
                 ],
                 "combinator": "and"
               }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b988693b-0611-4912-8da8-4c42b263f28a",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
             }
           ]
         },
@@ -595,6 +618,62 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.id }}\n)\nSELECT \n\n  ruw.box AS box,\n  count(DISTINCT w.word) as words\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  group by box\n\nunion ALL\n  SELECT \n\n  'Total' AS box,\n  count(DISTINCT w.word) as words\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  \n  \n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        440,
+        400
+      ],
+      "id": "927ebcad-d528-44e6-acea-1ed95d5f9b29",
+      "name": "Status1",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get User').first().json.chatID }}",
+        "text": "=A summary of words in LEARNING:\n```\n{{ $json.markdown }}\n```",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        400
+      ],
+      "id": "53674f88-f012-4e62-bada-84de437765e2",
+      "name": "Welcome Message1",
+      "webhookId": "e51f2a59-a158-4229-ba49-9a09b35ab5d8",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const itemsArr = items.map(item => item.json);\nif (itemsArr.length === 0) return [];\n\n// Set headers based on the JSON keys\nconst headers = Object.keys(itemsArr[0]);\nconst headerLine = headers.join('\\t\\t') + ' \\n';\n\n\n// Build table rows\nconst rows = itemsArr.map(obj => {\nreturn headers.map(h => obj[h]).join('\\t\\t\\t') + ' \\n';\n});\n\n// Combine into single markdown string\nconst markdown = [headerLine, ...rows].join('\\n');\n\nreturn [\n  {\n    \n    json: { markdown }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        400
+      ],
+      "id": "9b99b7a8-38e1-4b66-85ee-26de6a6c0f95",
+      "name": "Code"
     }
   ],
   "pinData": {},
@@ -720,6 +799,40 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome Message1": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Welcome Message1",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     }
@@ -728,10 +841,18 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "d8f13b3c-ef76-43c4-8b7e-0f9eebdef7f5",
+  "versionId": "478d31fe-3bbd-45e1-bf16-4dd124e3c985",
   "meta": {
+    "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
   },
   "id": "2dOVO8IzjouQ8snu",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-06-12T09:17:49.522Z",
+      "updatedAt": "2025-06-12T09:17:49.522Z",
+      "id": "ctP1QRHmNTJd1ue4",
+      "name": "educAItion"
+    }
+  ]
 }
