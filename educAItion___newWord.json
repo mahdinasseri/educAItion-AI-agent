@@ -1,0 +1,462 @@
+{
+  "name": "educAItion - newWord",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "id": "e2f0be95-2d02-4dba-a2a7-e0be9c8b33d1",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -132,
+        -135
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "text": "=\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output : $('Select New Word').item.json.definition\n}} ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        376,
+        -680
+      ],
+      "id": "0a01f7da-9d2c-470d-b525-0c2eb37ba043",
+      "name": "Telegram",
+      "webhookId": "4c772b85-1ffc-4578-b971-474dfeaf691a",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select w.id,w.word , wd.definition,\n  0 as box\n  from words w\n  left join word_definitions wd on wd.word_id=w.id\n  where w.id not in (\n  select word_id from user_words where user_id={{ $json.user_id }}\n  )\nORDER BY RAND()\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -880,
+        -605
+      ],
+      "id": "13637458-953e-44fa-80a5-532d4fc9452b",
+      "name": "Select New Word",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_words",
+          "mode": "list",
+          "cachedResultName": "user_words"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('When Executed by Another Workflow').item.json.user_id }}"
+            },
+            {
+              "column": "word_id",
+              "value": "={{ $('Select New Word').item.json.id }}"
+            },
+            {
+              "column": "box",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        596,
+        -580
+      ],
+      "id": "82249866-f8ce-481b-b2c0-a6e30ee71b22",
+      "name": "Insert in user_words",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Teach this word: '{{ $json.word }}'",
+        "options": {
+          "systemMessage": "=\n### 📘 Prompt: Teach a New English Word\n\n**Objective:** Introduce and teach one new English word to an English learner in a clear, comprehensive, and memorable way.\n\n---\n\n**Instructions:**\n\n{word} : Include part of speech (noun, verb, adjective, etc.). {Definition: Provide a simple, clear definition suitable for intermediate learners.}, {Pronunciation: Write the phonetic pronunciation (IPA or simplified format). Add an audio pronunciation if possible.}\n\n* List 2–3 common synonyms.\n* List 1–2 antonyms.\n\n* Give 2–3 example sentences (professional and casual if possible).\n\n**Visual or Metaphor**: * Offer a metaphor, image, or situation that helps the learner remember the word."
+        }
+      },
+      "id": "186a536d-edf7-4831-a23a-bbc86ae3cf93",
+      "name": "Agent New Word",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -220,
+        -355
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "91747e92-2108-47df-b184-966c229dedca",
+              "leftValue": "={{ $json.definition }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -660,
+        -605
+      ],
+      "id": "491be767-ecef-4faa-bc2d-48877b73983e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "word_definitions",
+          "mode": "list",
+          "cachedResultName": "word_definitions"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "word_id",
+              "value": "={{ $('Select New Word').item.json.id }}"
+            },
+            {
+              "column": "definition",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        156,
+        -305
+      ],
+      "id": "6f09b91f-da5e-4c3f-b058-5dbfa6872468",
+      "name": "Insert in word definitions",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=A realistic, educational illustration to teach the word '{{ $json.word }}'. The scene should clearly and memorably represent the meaning of the word for language learners. Use simple composition, limited color palette, and no unnecessary detail. Format: square aspect ratio, optimized for a file size under 100KB. Clean background, easily recognizable elements.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -440,
+        -755
+      ],
+      "id": "54fced1d-7dfa-4a51-9ef3-c2fa0a6c1d29",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=EducAItion/img/{{ $('Select New Word').item.json.id }}.{{ $json.fileExtension }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -142,
+        -755
+      ],
+      "id": "7ca67606-7b9c-46e9-b404-d1c651d5ce4c",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "output": "empty"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        156,
+        -755
+      ],
+      "id": "96eb0f54-133c-4a97-acca-54dba1f91ed5",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=EducAItion/img/{{ $('Select New Word').item.json.id }}.{{ $('Read/Write Files from Disk').item.json.fileExtension }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        596,
+        -780
+      ],
+      "id": "28676825-9377-4454-8834-651becb1ac28",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $('Select New Word').item.json.word }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        -780
+      ],
+      "id": "c403ca58-da5b-44be-8054-6daf76e9c0a7",
+      "name": "Telegram - Send Image",
+      "webhookId": "fb5d73a6-b366-4e47-ba55-43407879b8c2",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user_id",
+              "type": "number"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1100,
+        -605
+      ],
+      "id": "2ef881b3-bdb7-470d-9653-76f4169db332",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent New Word",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Insert in user_words",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select New Word": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent New Word": {
+      "main": [
+        [
+          {
+            "node": "Insert in word definitions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Agent New Word",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Send Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select New Word",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "516efa16-a468-4086-ae78-45a5692599df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "XYlFwqrYJB4j01dU",
+  "tags": []
+}
