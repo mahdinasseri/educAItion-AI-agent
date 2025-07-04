@@ -1,0 +1,205 @@
+{
+  "name": "educAItion - New Speaking",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced English language teacher helping learners improve their speaking skills.\n\n1- retrive all question types from question_models table via \ngetAllQuestionTypes Node.\n2- based on user's history, select one of the question types and generate a new question. every time select a new question type in order to review all questions.\n3- send the question to the user \n\n**Generate a speaking question.** (send message by sendMessage Node)  \n   - It should be relevant for English learners, focused on common speaking exam topics (e.g., daily life, hobbies, travel, work, opinions).  \n   - Make it open-ended to encourage the user to speak for at least 30 seconds.  \n  - the question might be in the level of IELTS and TOEFL Speaking questions.\n   - Politely ask the user to reply with a **voice message** answering the question.  \n   \nsend meassges to this chatID:  {{ $json.chatID }}\nmention the questoin type in the end of your message\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -168,
+        0
+      ],
+      "id": "e5d52799-e7e0-4148-a851-0a50f4a71e0a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        220
+      ],
+      "id": "00757c3a-45e4-4425-a5e9-f6d64b0aaed7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "= {{ $json.chatID }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        220
+      ],
+      "id": "5d42cba0-e332-45af-89f7-c2d603ecdd93",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Chat_ID', ``, 'string') }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        220
+      ],
+      "id": "20a1d631-9dfc-47ef-9526-2585f1ba9031",
+      "name": "sendMessage",
+      "webhookId": "9a735357-e813-4a28-b31a-a29abcf8f918",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user_id"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        0
+      ],
+      "id": "b14e030b-3d0a-4f9c-81f9-46e6ee2aaacb",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "speaking_models",
+          "mode": "list",
+          "cachedResultName": "speaking_models"
+        },
+        "returnAll": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.4,
+      "position": [
+        280,
+        220
+      ],
+      "id": "f553ff0d-a201-43e5-8ef4-32928d37a72c",
+      "name": "getAllQuestionTypes",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendMessage": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getAllQuestionTypes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "363f0a20-3d92-4975-99b3-e71eb8958402",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "N7QYh6nTMTYSwudC",
+  "tags": []
+}

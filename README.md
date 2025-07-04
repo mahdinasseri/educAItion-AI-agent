@@ -47,6 +47,10 @@ It sends users new words every day, generates personalized mini-lessons and AI-g
 
   <img src="img/IMG_7010.jpeg" height="400"><img src="img/IMG_7011.jpeg" height="400">
 
+* **Speaking Practice Module:**
+
+  The user is presented with a question modeled after common IELTS and TOEFL speaking prompts. The user responds with a voice message, which is then analyzed. Based on the analysis, a voice reply is generated and sent back to the user. This reply includes personalized feedback on their performance, corrections if needed, and a model answer to help them improve.
+
 > 🔍 The Leitner system is a time-tested flashcard technique that increases retention by spacing repetition over time. You can read more about it [here](https://en.wikipedia.org/wiki/Leitner_system).
 
 ---
@@ -72,8 +76,11 @@ Here’s a breakdown of the tech:
 ## Module: New Word
 <img src="img/newWord.png" >
 
-## Module: Rwview Words
+## Module: Review Words
 <img src="img/reviewWord.png" >
+
+## Module: Speaking Question
+<img src="img/speaking.png" >
 
 
 Everything runs on my own infrastructure, giving me full control and the ability to scale or customize anytime I want.
