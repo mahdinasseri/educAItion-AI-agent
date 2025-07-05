@@ -1,0 +1,235 @@
+{
+  "name": "educAItion - newGrammar",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "id": "d77dbd40-8105-40b8-8b86-994e3e0a7357",
+      "name": "OpenAI Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -632,
+        -460
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "text": "={{ $json.output }}",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -284,
+        -680
+      ],
+      "id": "86f21c71-3ba6-40fd-b438-e0dc8ee25814",
+      "name": "Telegram",
+      "webhookId": "880b3271-12b9-4d89-a8e0-a349bf525b77",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user_id",
+              "type": "number"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1100,
+        -680
+      ],
+      "id": "abf307ad-d9d5-476d-998e-0c8b1c3bc834",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select *,\n  0 as box\n  from grammars g\n  where g.id not in (\n  select grammer_id from user_grammars where user_id={{ $json.user_id }}\n  )\nORDER BY RAND()\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -880,
+        -680
+      ],
+      "id": "21bbf6cf-0141-4d42-8469-7ec499b3e01d",
+      "name": "Select New Grammar",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=grammar topic: \n{{ $json.Topic }}\n{{ $json.Explanation }}\n{{ $json.Example }}\n{{ $json.SampleQuiz }}",
+        "options": {
+          "systemMessage": "=You are a professional IELTS English teacher creating educational content for learners aiming for Band 7+.\n\nYour task is to generate a **mini-course** for the following grammar point. and ask a Mini Quiz from user. ask user to reply the message and answer the question.\n\nThe mini-course should include:\n1. ✅ A clear and concise explanation (1–2 paragraphs) suitable for IELTS learners.\n2. ✅ 3 to 4 example sentences that demonstrate the grammar point in natural IELTS-relevant contexts.\n3. ✅ A mini quiz with 1 questions (select the best one for grammer topic):\n   - multiple-choice question (with 4 options)\n   - fill-in-the-blank question. format: Fill in the blank:  He ( ) me that he was tired.\n   - sentence correction or transformation question\n\nUse a friendly but instructional tone. Make sure the examples and quiz reflect the kind of English needed for **IELTS Speaking and Writing Tasks**.\n\nOutput format:\n---\n### Grammar Topic\n\n**Explanation:**\n[Paragraphs]\n\n**Examples:**\n- Example 1\n- Example 2\n- Example 3\n\n**Mini Quiz:**\n\n---"
+        }
+      },
+      "id": "f2c7a341-9b0e-4d87-88ba-5156b3e98c20",
+      "name": "Agent New Grammar",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -660,
+        -680
+      ]
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_grammars",
+          "mode": "list",
+          "cachedResultName": "user_grammars"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('When Executed by Another Workflow').item.json.user_id }}"
+            },
+            {
+              "column": "grammer_id",
+              "value": "={{ $('Select New Grammar').item.json.id }}"
+            },
+            {
+              "column": "box",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        -680
+      ],
+      "id": "cdf54f4f-0341-4ce8-ba0a-78081d3b2de9",
+      "name": "Insert in user_grammars",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent New Grammar",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Insert in user_grammars",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select New Grammar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select New Grammar": {
+      "main": [
+        [
+          {
+            "node": "Agent New Grammar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent New Grammar": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "0c8bdaae-19f2-4e9d-baf9-c88c437602f0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "454izzB5eciLhnTS",
+  "tags": [
+    {
+      "createdAt": "2025-06-12T09:17:49.522Z",
+      "updatedAt": "2025-06-12T09:17:49.522Z",
+      "id": "ctP1QRHmNTJd1ue4",
+      "name": "educAItion"
+    }
+  ]
+}

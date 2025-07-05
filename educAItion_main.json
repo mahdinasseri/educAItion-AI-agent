@@ -12,7 +12,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        299
+        667.5
       ],
       "id": "8631f272-62c1-4e24-95d3-70b9f3c7fd31",
       "name": "Telegram Trigger",
@@ -57,7 +57,7 @@
       "typeVersion": 2.4,
       "position": [
         0,
-        199
+        515
       ],
       "id": "4712cf79-f2d7-4fc8-baf4-dce9690b45c1",
       "name": "Add new User",
@@ -91,7 +91,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        1540
+        2240
       ],
       "id": "43f81f41-b6a6-451c-b065-74ece910e0fe",
       "name": "Schedule Trigger"
@@ -154,7 +154,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        1540
+        2240
       ],
       "id": "306d0589-7df2-4eb7-947e-67b4bc2ed6cf",
       "name": "Review Module"
@@ -216,7 +216,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        440,
+        518,
         320
       ],
       "id": "c15fc403-7585-4c81-874a-5e028c2c098e",
@@ -279,7 +279,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        440,
+        518,
         120
       ],
       "id": "5386770e-4a5d-47ce-8061-f019f6fdf9e9",
@@ -343,7 +343,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        1280
+        1980
       ],
       "id": "848f8d76-2a3f-4fe1-a188-695d521f76b0",
       "name": "New word Module"
@@ -375,7 +375,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        1280
+        1980
       ],
       "id": "6212d5a5-1322-4e38-8704-596efe0a82b4",
       "name": "Schedule NewWord Trigger"
@@ -403,7 +403,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        1280
+        1980
       ],
       "id": "40319362-3d6f-47cd-8bde-a918c5f5e331",
       "name": "Load All Users",
@@ -424,7 +424,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        1540
+        2240
       ],
       "id": "5cafe87d-8dbf-4f89-8f23-98a1e4fc58c0",
       "name": "Load All Users1",
@@ -445,7 +445,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        299
+        667.5
       ],
       "id": "df517721-a2ee-4121-a4c3-edd6bb793495",
       "name": "New User or Return",
@@ -485,7 +485,7 @@
       "typeVersion": 2.2,
       "position": [
         -220,
-        299
+        667.5
       ],
       "id": "23dca26c-e709-445b-bbcc-0229a2795c9a",
       "name": "if New User"
@@ -500,7 +500,7 @@
       "typeVersion": 2.4,
       "position": [
         0,
-        441
+        820
       ],
       "id": "0c9e5af8-f13b-44c5-8c06-06d9e8fa9d73",
       "name": "Get User",
@@ -628,6 +628,75 @@
                 ],
                 "combinator": "and"
               }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3772f492-2cb0-490a-855a-f8cc14122861",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/newGrammar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "33e55798-e8f3-499c-a68d-d870cde2af52",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/reviewGrammar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "46574e94-305c-4ab2-8415-1c2d79521bb3",
+                    "leftValue": "=\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"",
+                    "rightValue": "[undefined]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
             }
           ]
         },
@@ -638,7 +707,7 @@
       "typeVersion": 3.2,
       "position": [
         220,
-        399
+        715
       ],
       "id": "9cd457d3-ef55-49dc-a623-94c67a049fe9",
       "name": "Command Switch"
@@ -653,7 +722,7 @@
       "typeVersion": 1.2,
       "position": [
         220,
-        199
+        515
       ],
       "id": "4490bec0-c981-4328-a355-81722a0dcfd7",
       "name": "Welcome Message",
@@ -674,7 +743,7 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        440,
+        518,
         520
       ],
       "id": "927ebcad-d528-44e6-acea-1ed95d5f9b29",
@@ -695,7 +764,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1050,
+        1206,
         520
       ],
       "id": "53674f88-f012-4e62-bada-84de437765e2",
@@ -715,7 +784,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        660,
+        816,
         520
       ],
       "id": "9b99b7a8-38e1-4b66-85ee-26de6a6c0f95",
@@ -729,7 +798,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        440,
+        518,
         920
       ],
       "id": "112f06e6-ba05-4e9e-87d1-cd3a661b2d43",
@@ -753,7 +822,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        660,
+        816,
         920
       ],
       "id": "4ba17556-fa86-4373-b762-edc8f412ddf9",
@@ -777,7 +846,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        880,
+        1036,
         1140
       ],
       "id": "a165cb67-344b-4f01-bfcf-28435866c24f",
@@ -796,7 +865,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
       "position": [
-        1240,
+        1396,
         1140
       ],
       "id": "a3a66c24-14d4-457b-9f4e-48a05b0a16be",
@@ -811,8 +880,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        1440,
-        620
+        1596,
+        720
       ],
       "id": "fe8fb71c-3de0-4114-b884-82e9eb5fa3f3",
       "name": "TTS",
@@ -833,8 +902,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1660,
-        620
+        1816,
+        720
       ],
       "id": "86c661a3-aa1f-4894-a2b5-601a7ec7d72c",
       "name": "SendVoice",
@@ -856,7 +925,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        972,
+        1128,
         920
       ],
       "id": "7696d54f-1e88-413d-b1e6-0d410090dc1b",
@@ -871,8 +940,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1440,
-        820
+        1596,
+        920
       ],
       "id": "7f91c1a2-b060-45d0-b276-0996bb26e1e7",
       "name": "Telegram1",
@@ -941,7 +1010,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        440,
+        518,
         720
       ],
       "id": "2a953025-d9fe-4026-822d-804bdc118026",
@@ -962,7 +1031,7 @@
       "type": "n8n-nodes-base.mySqlTool",
       "typeVersion": 2.4,
       "position": [
-        1120,
+        1276,
         1140
       ],
       "id": "7eb77fe9-55f5-49e6-ac3b-9251f5665acd",
@@ -982,7 +1051,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        1000,
+        1156,
         1140
       ],
       "id": "52314cde-a1d4-4c0c-a197-791dda25ed86",
@@ -997,8 +1066,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1440,
-        1020
+        1596,
+        1120
       ],
       "id": "d09d0350-ff2a-4e51-9279-194915509568",
       "name": "Telegram2",
@@ -1009,6 +1078,194 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "454izzB5eciLhnTS",
+          "mode": "list",
+          "cachedResultName": "educAItion - newGrammar"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatID": "={{ $json.chatID }}",
+            "name": "={{ $json.name }}",
+            "user_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        518,
+        1120
+      ],
+      "id": "5e93d640-696b-49dd-808b-e4f95e1201a0",
+      "name": "NewGrammar Module"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        1620
+      ],
+      "id": "7b0fcb38-f327-4ddd-a2c3-75a671161ce6",
+      "name": "Telegram3",
+      "webhookId": "e113c542-1ac9-476a-89f9-45a380ac68a0",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an English (IELTS) Teacher.\nyour task is evaluate the user's answer to a question and correct it. I f user is wrong explane the problem and if the answer is correct, explain in summary.\ntalk with user as a human teacher.\nthe question:\n\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"\nuser's answer:\n{{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        440,
+        1620
+      ],
+      "id": "08948ed0-2e97-4cd3-a610-59fe41b6fb3b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        1840
+      ],
+      "id": "83fcdb56-c6dd-4d86-bba2-b7261ff46f2b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "eZgohmCrkQCGEwVA",
+          "mode": "list",
+          "cachedResultName": "educAItion - reviewGrammar"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatID": "={{ $json.chatID }}",
+            "name": "={{ $json.name }}",
+            "user_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        518,
+        1320
+      ],
+      "id": "a7f90289-5dc0-4766-9acb-7853190a0429",
+      "name": "Review Grammar Module"
     }
   ],
   "pinData": {},
@@ -1155,6 +1412,27 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "NewGrammar Module",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Review Grammar Module",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -1282,13 +1560,40 @@
           }
         ]
       ]
+    },
+    "Speaking Question Module": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "df622f56-f37a-4918-8a11-b7633f9e2111",
+  "versionId": "ea3a1cba-3b06-46a6-9632-5b0e0901fd20",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

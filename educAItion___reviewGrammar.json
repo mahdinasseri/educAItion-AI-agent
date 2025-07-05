@@ -1,0 +1,236 @@
+{
+  "name": "educAItion - reviewGrammar",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=grammar point:\n{{ $json.Topic }}\n{{ $json.Explanation }}\n{{ $json.Example }}",
+        "options": {
+          "systemMessage": "=**Prompt for AI Agent (English Grammar Teaching Agent):**\n\nYou are an experienced English teacher helping advanced learners (IELTS Band 6.5+) improve their grammar. You receive a **grammar topic** as input.\n\nYour task:\n\n1. Start with a short **natural paragraph or dialogue** (40–50 words) that includes a real-life example of the grammar point. Make sure the **target grammar is bolded** within that text.\n2. Briefly explain the **grammar rule**, including key forms, usage, and variations—keep it simple but informative (40–50 words).\n3. Give **2 original example sentences** using the grammar correctly.\n4. Ask the learner **one short question** to test understanding. End with a prompt like: *\"Can you answer this?\"*\n\n🟢 Keep the total response under **150 words**.\n🟢 Keep the tone clear, professional, and friendly.\n🟢 Do not include definitions or translations in another language.\n\n**Input:** One grammar topic (e.g. “Present Perfect Continuous” or “Inversion in conditionals”)\n\n**Output:** A short, complete grammar mini-lesson as described above.\n"
+        }
+      },
+      "id": "5a79a31c-1219-47bd-bc39-3de8a296c601",
+      "name": "Agent Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -480,
+        -135
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "text": "=**{{ $('Load Review grammar').item.json.Topic }}**\n\n{{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -104,
+        -135
+      ],
+      "id": "583489fa-494a-446e-8b53-35364de206e5",
+      "name": "Telegram1",
+      "webhookId": "0892643b-3e0c-4de2-affb-8aae991911cd",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "user_grammars",
+          "mode": "list",
+          "cachedResultName": "user_grammars"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('When Executed by Another Workflow').item.json.user_id }}"
+            },
+            {
+              "column": "grammer_id",
+              "value": "={{ $('Load Review grammar').item.json.grammer_id }}"
+            },
+            {
+              "column": "box",
+              "value": "={{ $('Load Review grammar').item.json.box + 1}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        116,
+        -135
+      ],
+      "id": "b6cf64b0-508f-4e04-9b8a-0133787ebb47",
+      "name": "Insert Reviewed Words in user_words2",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1",
+        "options": {}
+      },
+      "id": "e2d8eef2-6715-42f7-84af-3078421c78ce",
+      "name": "OpenAI Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -392,
+        85
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "user_id",
+              "type": "number"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "chatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        -135
+      ],
+      "id": "1f537280-8123-4a55-96fb-eaaa5e083a56",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH ranked_user_grammars AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY grammer_id ORDER BY insertion_time DESC) AS rn\n  FROM user_grammars\n  WHERE user_id ={{ $json.user_id }}\n)\nSELECT \n  g.*,\n  rug.user_id, \n  c.chatID,\n  rug.grammer_id, \n  rug.box AS box,\n  CASE\n    WHEN DATEDIFF(NOW(), rug.insertion_time) > POWER(2, box - 1) THEN '0-scheduled'\n    ELSE '1-random'\n  END AS method\nFROM ranked_user_grammars rug\n  join grammars g on g.id = rug.grammer_id\n  join customers c on c.id=rug.user_id\nWHERE rug.rn = 1\norder by method, rand()\nlimit 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -700,
+        -135
+      ],
+      "id": "8264bbd3-7b6e-46f0-93ee-9c7a011163df",
+      "name": "Load Review grammar",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Agent Review": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Insert Reviewed Words in user_words2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Reviewed Words in user_words2": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Load Review grammar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Review grammar": {
+      "main": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "6df59306-80d2-4a00-bbfc-ab222c2f2efe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "eZgohmCrkQCGEwVA",
+  "tags": [
+    {
+      "createdAt": "2025-06-12T09:17:49.522Z",
+      "updatedAt": "2025-06-12T09:17:49.522Z",
+      "id": "ctP1QRHmNTJd1ue4",
+      "name": "educAItion"
+    }
+  ]
+}
