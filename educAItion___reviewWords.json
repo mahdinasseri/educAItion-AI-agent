@@ -6,7 +6,7 @@
         "promptType": "define",
         "text": "={{ $json.concatenated_word }}",
         "options": {
-          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1 short paragraph for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B1–B2 level learners.\n4. Add a \"#\" before each target word when used in the text. \n5. Each paragraph should feel like a mini-scene, idea, or situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n"
+          "systemMessage": "=### 📚 Prompt: Create a Short Reading Using All Input Words\n\n**Objective:**\nWrite a short reading passage using all the given words. The words may not be related, so the passage should be organized into **multiple short, connected or separate paragraphs**, each naturally using one or more of the words.\n\n---\n\n**Instructions for Output:**\n\n1. Accept a list of 5–10 English words.\n2. Write 1 short paragraph for each word (or for small groups of them).\n3. Make the paragraphs clear and simple, suitable for B2-C1 level learners.\n4. Add a \"#\" before each target word when used in the text. \n5. Each paragraph should feel like a mini-scene, idea, or situation. Don't mention the meaning of the word in text. Text should be about an actual situation.\n6. Keep the tone neutral or slightly creative (realistic, story-style, or informative).\n"
         }
       },
       "id": "3f572d1a-9298-4d1c-8f3e-55b55969d1a4",
@@ -14,8 +14,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -280,
-        0
+        -260,
+        -60
       ]
     },
     {
@@ -27,8 +27,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        180,
-        0
+        116,
+        -60
       ],
       "id": "ff5bac8b-48e5-41ca-b510-e847225c379f",
       "name": "Telegram1",
@@ -71,7 +71,7 @@
       "typeVersion": 2.4,
       "position": [
         1592,
-        165
+        215
       ],
       "id": "78bb3c49-cf85-43a8-973f-56a1e345b125",
       "name": "Insert Reviewed Words in user_words2",
@@ -92,7 +92,7 @@
       "typeVersion": 3,
       "position": [
         776,
-        40
+        140
       ],
       "id": "28e4f5b6-0ef0-4dc0-909a-21a3da97ab8b",
       "name": "Loop Over Items"
@@ -107,7 +107,7 @@
       "typeVersion": 1.2,
       "position": [
         1592,
-        -260
+        -160
       ],
       "id": "af5690ec-a3ef-41fb-ab0b-a13243c1882c",
       "name": "Telegram3",
@@ -146,7 +146,7 @@
       "typeVersion": 2.4,
       "position": [
         -700,
-        -85
+        -10
       ],
       "id": "5597b3d0-7c87-4e54-a66c-5b2bf3c9bef6",
       "name": "Load Review words",
@@ -175,7 +175,7 @@
       "typeVersion": 1.1,
       "position": [
         -480,
-        -210
+        -135
       ],
       "id": "314c4c57-f267-4361-940f-45a1c870d331",
       "name": "Summarize"
@@ -188,7 +188,7 @@
       "typeVersion": 3.2,
       "position": [
         996,
-        -260
+        -160
       ],
       "id": "51c0d5a1-8a9c-4a75-8003-cabe08eef99c",
       "name": "Merge3"
@@ -217,7 +217,7 @@
       "typeVersion": 1.2,
       "position": [
         1294,
-        65
+        140
       ],
       "id": "e06f5717-b3a9-4b3e-a8ab-2aea7870eb51",
       "name": "Telegram2",
@@ -236,8 +236,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        380,
-        360
+        336,
+        140
       ],
       "id": "075d7000-848d-4dae-b408-f75d2805cb7b",
       "name": "Merge"
@@ -251,7 +251,7 @@
       "typeVersion": 1,
       "position": [
         556,
-        40
+        140
       ],
       "id": "989d07f6-66f9-40f7-b593-625d8a886069",
       "name": "Split Out"
@@ -266,8 +266,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -200,
-        420
+        1304,
+        -40
       ],
       "credentials": {
         "openAiApi": {
@@ -305,7 +305,7 @@
       "typeVersion": 2.2,
       "position": [
         996,
-        65
+        140
       ],
       "id": "48451dae-77fa-435a-93a4-b1f71d680722",
       "name": "If2"
@@ -331,7 +331,7 @@
       "typeVersion": 1.1,
       "position": [
         -920,
-        -85
+        -10
       ],
       "id": "4462eae1-eb7a-4360-b59e-b065813cc368",
       "name": "When Executed by Another Workflow"
@@ -529,7 +529,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "2d5063a7-68d2-4689-92da-03e8ce12e328",
+  "versionId": "6b6a2ffd-2afe-4c23-b448-5bfbaf53b250",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

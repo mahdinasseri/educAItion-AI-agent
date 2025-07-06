@@ -12,7 +12,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        667.5
+        846.5
       ],
       "id": "8631f272-62c1-4e24-95d3-70b9f3c7fd31",
       "name": "Telegram Trigger",
@@ -57,7 +57,7 @@
       "typeVersion": 2.4,
       "position": [
         0,
-        515
+        673
       ],
       "id": "4712cf79-f2d7-4fc8-baf4-dce9690b45c1",
       "name": "Add new User",
@@ -77,7 +77,7 @@
               "triggerAtMinute": 30
             },
             {
-              "triggerAtHour": 12,
+              "triggerAtHour": 13,
               "triggerAtMinute": 30
             },
             {
@@ -91,7 +91,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        2240
+        2640
       ],
       "id": "43f81f41-b6a6-451c-b065-74ece910e0fe",
       "name": "Schedule Trigger"
@@ -154,7 +154,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        2240
+        2640
       ],
       "id": "306d0589-7df2-4eb7-947e-67b4bc2ed6cf",
       "name": "Review Module"
@@ -343,7 +343,7 @@
       "typeVersion": 1.2,
       "position": [
         -220,
-        1980
+        2380
       ],
       "id": "848f8d76-2a3f-4fe1-a188-695d521f76b0",
       "name": "New word Module"
@@ -357,7 +357,7 @@
               "triggerAtMinute": 30
             },
             {
-              "triggerAtHour": 12,
+              "triggerAtHour": 13,
               "triggerAtMinute": 30
             },
             {
@@ -375,7 +375,7 @@
       "typeVersion": 1.2,
       "position": [
         -660,
-        1980
+        2380
       ],
       "id": "6212d5a5-1322-4e38-8704-596efe0a82b4",
       "name": "Schedule NewWord Trigger"
@@ -403,7 +403,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        1980
+        2380
       ],
       "id": "40319362-3d6f-47cd-8bde-a918c5f5e331",
       "name": "Load All Users",
@@ -424,7 +424,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        2240
+        2640
       ],
       "id": "5cafe87d-8dbf-4f89-8f23-98a1e4fc58c0",
       "name": "Load All Users1",
@@ -445,7 +445,7 @@
       "typeVersion": 2.4,
       "position": [
         -440,
-        667.5
+        846.5
       ],
       "id": "df517721-a2ee-4121-a4c3-edd6bb793495",
       "name": "New User or Return",
@@ -485,7 +485,7 @@
       "typeVersion": 2.2,
       "position": [
         -220,
-        667.5
+        846.5
       ],
       "id": "23dca26c-e709-445b-bbcc-0229a2795c9a",
       "name": "if New User"
@@ -500,7 +500,7 @@
       "typeVersion": 2.4,
       "position": [
         0,
-        820
+        1020
       ],
       "id": "0c9e5af8-f13b-44c5-8c06-06d9e8fa9d73",
       "name": "Get User",
@@ -549,7 +549,7 @@
                   {
                     "id": "e9bd9a1b-1f23-4756-9cb0-0fb78660f432",
                     "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
-                    "rightValue": "/review",
+                    "rightValue": "/reviewword",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -641,7 +641,7 @@
                   {
                     "id": "3772f492-2cb0-490a-855a-f8cc14122861",
                     "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
-                    "rightValue": "/newGrammar",
+                    "rightValue": "/newgrammar",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -664,7 +664,53 @@
                   {
                     "id": "33e55798-e8f3-499c-a68d-d870cde2af52",
                     "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
-                    "rightValue": "/reviewGrammar",
+                    "rightValue": "/reviewgrammar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9c975f78-1920-4ad0-91b0-a21db53f1f40",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/newspeakingquestion",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3ddbf364-a2d3-420c-83a8-4061458905e8",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+                    "rightValue": "/datasq",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -707,7 +753,7 @@
       "typeVersion": 3.2,
       "position": [
         220,
-        715
+        873
       ],
       "id": "9cd457d3-ef55-49dc-a623-94c67a049fe9",
       "name": "Command Switch"
@@ -722,7 +768,7 @@
       "typeVersion": 1.2,
       "position": [
         220,
-        515
+        673
       ],
       "id": "4490bec0-c981-4328-a355-81722a0dcfd7",
       "name": "Welcome Message",
@@ -737,7 +783,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.id }}\n)\nSELECT \n\n  ruw.box AS box,\n  count(DISTINCT w.word) as words\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  group by box\n\nunion ALL\n  SELECT \n\n  'Total' AS box,\n  count(DISTINCT w.word) as words\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  \n  \n",
+        "query": "WITH ranked_user_words AS (\n  SELECT *, \n         ROW_NUMBER() OVER (PARTITION BY word_id ORDER BY insertion_time DESC) AS rn\n  FROM user_words\n  WHERE user_id = {{ $json.id }}\n)\nSELECT \n\n  ruw.box AS box,\n  count(DISTINCT w.word) as words,\n  sum(case when DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, ruw.box - 1) then 1 else 0 end) as to_review\n  \nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  group by box\n\nunion ALL\n  SELECT \n\n  'Total' AS box,\n  count(DISTINCT w.word) as words,\n  sum(case when DATEDIFF(NOW(), ruw.insertion_time) > POWER(2, ruw.box - 1) then 1 else 0 end) as to_review\nFROM ranked_user_words ruw\n  join words w on w.id = ruw.word_id\n  join customers c on c.id=ruw.user_id\nWHERE ruw.rn = 1\n  \n  \n",
         "options": {}
       },
       "type": "n8n-nodes-base.mySql",
@@ -1152,7 +1198,7 @@
       "typeVersion": 1.2,
       "position": [
         816,
-        1620
+        2020
       ],
       "id": "7b0fcb38-f327-4ddd-a2c3-75a671161ce6",
       "name": "Telegram3",
@@ -1174,7 +1220,7 @@
       "typeVersion": 2,
       "position": [
         440,
-        1620
+        2020
       ],
       "id": "08948ed0-2e97-4cd3-a610-59fe41b6fb3b",
       "name": "AI Agent"
@@ -1193,7 +1239,7 @@
       "typeVersion": 1.2,
       "position": [
         528,
-        1840
+        2240
       ],
       "id": "83fcdb56-c6dd-4d86-bba2-b7261ff46f2b",
       "name": "OpenAI Chat Model",
@@ -1266,6 +1312,156 @@
       ],
       "id": "a7f90289-5dc0-4766-9acb-7853190a0429",
       "name": "Review Grammar Module"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "FiTfNdqMke2aTqUu",
+          "mode": "list",
+          "cachedResultName": "educAItion - newSpeakingQuestion"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatID": "={{ $json.chatID }}",
+            "name": "={{ $json.name }}",
+            "user_id": "={{ $json.id }}",
+            "type": "IELTS"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        518,
+        1520
+      ],
+      "id": "b564c0d1-0f28-4c57-a113-9edb18869e52",
+      "name": "Speaking Question Module1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "FiTfNdqMke2aTqUu",
+          "mode": "list",
+          "cachedResultName": "educAItion - newSpeakingQuestion"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatID": "={{ $json.chatID }}",
+            "name": "={{ $json.name }}",
+            "user_id": "={{ $json.id }}",
+            "type": "data_analyst"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatID",
+              "displayName": "chatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        518,
+        1720
+      ],
+      "id": "93cda674-af38-490b-8726-1311392eda38",
+      "name": "Speaking Question Data analyst  Module",
+      "alwaysOutputData": true
     }
   ],
   "pinData": {},
@@ -1423,6 +1619,20 @@
         [
           {
             "node": "Review Grammar Module",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Speaking Question Module1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Speaking Question Data analyst  Module",
             "type": "main",
             "index": 0
           }
@@ -1593,7 +1803,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "ea3a1cba-3b06-46a6-9632-5b0e0901fd20",
+  "versionId": "432f857d-6eab-42a2-b441-18aab54bbdc8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
