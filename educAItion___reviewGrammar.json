@@ -22,6 +22,10 @@
       "parameters": {
         "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
         "text": "=**{{ $('Load Review grammar').item.json.Topic }}**\n\n{{ $json.output }}",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -219,7 +223,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "6df59306-80d2-4a00-bbfc-ab222c2f2efe",
+  "versionId": "570acf5c-8a97-4373-ace7-a2b56de26301",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

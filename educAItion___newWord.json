@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -180,
-        -160
+        -412,
+        -1500
       ],
       "credentials": {
         "openAiApi": {
@@ -24,14 +24,14 @@
     {
       "parameters": {
         "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
-        "text": "=#{{ $('Select New Word').item.json.word }}\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output : $('Select New Word').item.json.definition\n}} ",
+        "text": "=#{{ $('Select New Word').item.json.word }}\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output.description + \"\\n\\n\" +$('Agent New Word').item.json.output.visual : $('Select New Word').item.json.definition\n}} ",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
         376,
-        -680
+        -1495
       ],
       "id": "0a01f7da-9d2c-470d-b525-0c2eb37ba043",
       "name": "Telegram",
@@ -53,7 +53,7 @@
       "typeVersion": 2.4,
       "position": [
         -880,
-        -605
+        -1595
       ],
       "id": "13637458-953e-44fa-80a5-532d4fc9452b",
       "name": "Select New Word",
@@ -95,7 +95,7 @@
       "typeVersion": 2.4,
       "position": [
         596,
-        -580
+        -1395
       ],
       "id": "82249866-f8ce-481b-b2c0-a6e30ee71b22",
       "name": "Insert in user_words",
@@ -110,8 +110,9 @@
       "parameters": {
         "promptType": "define",
         "text": "=Teach this word: '{{ $json.word }}'",
+        "hasOutputParser": true,
         "options": {
-          "systemMessage": "=### 📘 Prompt: Teach a New English Word\n\n**Objective:** Introduce and teach one new English word to an English learner in a clear, comprehensive, and memorable way.\n\n---\n\n**Instructions:**\n\n{word} : Include part of speech (noun, verb, adjective, etc.). {Definition: Provide a simple, clear definition suitable for intermediate learners.}, {Pronunciation: Write the phonetic pronunciation (IPA or simplified format). Add an audio pronunciation if possible.}\n\n* List 2–3 common synonyms.\n* List 1–2 antonyms.\n\n* Give 2–3 example sentences (professional and casual if possible).\n\n**Visual or Metaphor**: * Offer a metaphor, image, or situation that helps the learner remember the word."
+          "systemMessage": "=### 📘 Prompt: Teach a New English Word\n\n**Objective:** Introduce and teach one new English word to an English learner in a clear, comprehensive, and memorable way.\n\n---\n\n**Instructions:**\n\n#{word} : IncludeDefinition(noun, verb, adjective, etc.). \n\n{Definition: Provide a simple, clear definition suitable for intermediate learners.}, \n\n{Pronunciation: Write the phonetic pronunciation (IPA or simplified format). Add an audio pronunciation if possible.}\n\n* List 2–3 common synonyms.\n* List 1–2 antonyms.\n\n* Give 2–3 example sentences (professional and casual if possible).\n\n**Visual or Metaphor**: * Offer a metaphor, image, or situation that helps the learner remember the word.\n\noutput format:\n{\nwird : {word}\ndefenition : {all parts except visual}\nvisual : {visual part}\n}"
         }
       },
       "id": "186a536d-edf7-4831-a23a-bbc86ae3cf93",
@@ -119,8 +120,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -220,
-        -355
+        -440,
+        -1720
       ]
     },
     {
@@ -152,7 +153,7 @@
       "typeVersion": 2.2,
       "position": [
         -660,
-        -605
+        -1595
       ],
       "id": "491be767-ecef-4faa-bc2d-48877b73983e",
       "name": "If"
@@ -174,7 +175,7 @@
             },
             {
               "column": "definition",
-              "value": "={{ $json.output }}"
+              "value": "={{ $json.output.description }}\n---\nVisualize to remember:\n{{ $json.output.visuals[0] }}"
             }
           ]
         },
@@ -183,8 +184,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        156,
-        -305
+        -64,
+        -1820
       ],
       "id": "6f09b91f-da5e-4c3f-b058-5dbfa6872468",
       "name": "Insert in word definitions",
@@ -198,14 +199,14 @@
     {
       "parameters": {
         "resource": "image",
-        "prompt": "=Create a square-shaped image (1:1 aspect ratio) that clearly visualizes the word mentioned in the end of prompt, in a way that makes its meaning memorable and intuitive for English language learners.\nThe image must be **visually simple, easily interpretable**, and **no more than 100KB in file size. Avoid text in the image.\n\n---\n\n### Categories & Image Optimization Instructions by Word Type\n\n1. Nouns (Concrete)\n\n*Examples: apple, bicycle, tiger*\n\n**Instructions:**\n\n* Depict the object clearly in a realistic or simplified illustrative style.\n* Include contextual elements to help learners understand usage (e.g., a tiger in a jungle, a bicycle on a road).\n\n*Goal:* Help associate the word with its physical form and usage context.\n\n---\n\n#### 2. **Nouns (Abstract)**\n\n*Examples: freedom, honesty, sadness*\n\n**Instructions:**\n\n* Use metaphoric or symbolic visuals (e.g., a bird flying out of a cage for “freedom”).\n* Avoid complex or overly artistic abstractions—keep it visually clear and emotionally resonant.\n\n*Goal:* Evoke the feeling or concept through simple, strong symbolism.\n\n---\n\n#### 3. **Verbs**\n\n*Examples: jump, write, swim*\n\n**Instructions:**\n\n* Show a person or character actively performing the verb.\n* Use dynamic poses or motion lines to illustrate the action clearly.\n\n*Goal:* Reinforce the action visually to trigger understanding of movement or behavior.\n\n---\n\n#### 4. **Adjectives**\n\n*Examples: tall, happy, dirty*\n\n**Instructions:**\n\n* Show a comparison or context that makes the quality obvious (e.g., a tall person next to a short one).\n* Use expressive characters or facial expressions for emotions.\n\n🧠 *Goal:* Convey the trait through exaggeration or contrast.\n\n---\n\n#### 5. **Adverbs**\n\n*Examples: quickly, sadly, loudly*\n\n**Instructions:**\n\n* Show a verb in action with added context (e.g., someone running fast with motion blur for “quickly”).\n* Visuals should focus on *how* the action is performed.\n\n🧠 *Goal:* Connect the adverb to a manner or emotion through clear visual cues.\n\n---\n\n#### 6. **Prepositions**\n\n*Examples: under, above, between*\n\n**Instructions:**\n\n* Use simple spatial diagrams or characters interacting with objects (e.g., a cat sitting under a table).\n* Focus on position and relationships.\n\n🧠 *Goal:* Help learners visualize spatial relations easily.\n\n---\n\n### ✅ **Additional Output Constraints**\n\n* **Max file size:** 100KB\n* **Aspect ratio:** 1:1 (square)\n* **Style preference:** minimal, friendly, and intuitive — suited for beginners\n* **Avoid:** Text in image, overly complex scenes, cultural ambiguity\n\n---\n\nWould you like me to generate a sample prompt using a specific word, like *\"between\"* or *\"sadness\"*?\n\nWORD: \"{{ $json.word }}\"**",
+        "prompt": "=Create a square-shaped image (1:1 aspect ratio) that clearly visualizes the word mentioned in the end of prompt, in a way that makes its meaning memorable and intuitive for English language learners.\nThe image must be **visually simple, easily interpretable**, and **no more than 100KB in file size. Avoid text in the image.\n\n---\n\n### Categories & Image Optimization Instructions by Word Type\n\n1. Nouns (Concrete)\n\n*Examples: apple, bicycle, tiger*\n\n**Instructions:**\n\n* Depict the object clearly in a realistic or simplified illustrative style.\n* Include contextual elements to help learners understand usage (e.g., a tiger in a jungle, a bicycle on a road).\n\n*Goal:* Help associate the word with its physical form and usage context.\n\n---\n\n#### 2. **Nouns (Abstract)**\n\n*Examples: freedom, honesty, sadness*\n\n**Instructions:**\n\n* Use metaphoric or symbolic visuals (e.g., a bird flying out of a cage for “freedom”).\n* Avoid complex or overly artistic abstractions—keep it visually clear and emotionally resonant.\n\n*Goal:* Evoke the feeling or concept through simple, strong symbolism.\n\n---\n\n#### 3. **Verbs**\n\n*Examples: jump, write, swim*\n\n**Instructions:**\n\n* Show a person or character actively performing the verb.\n* Use dynamic poses or motion lines to illustrate the action clearly.\n\n*Goal:* Reinforce the action visually to trigger understanding of movement or behavior.\n\n---\n\n#### 4. **Adjectives**\n\n*Examples: tall, happy, dirty*\n\n**Instructions:**\n\n* Show a comparison or context that makes the quality obvious (e.g., a tall person next to a short one).\n* Use expressive characters or facial expressions for emotions.\n\n🧠 *Goal:* Convey the trait through exaggeration or contrast.\n\n---\n\n#### 5. **Adverbs**\n\n*Examples: quickly, sadly, loudly*\n\n**Instructions:**\n\n* Show a verb in action with added context (e.g., someone running fast with motion blur for “quickly”).\n* Visuals should focus on *how* the action is performed.\n\n🧠 *Goal:* Connect the adverb to a manner or emotion through clear visual cues.\n\n---\n\n#### 6. **Prepositions**\n\n*Examples: under, above, between*\n\n**Instructions:**\n\n* Use simple spatial diagrams or characters interacting with objects (e.g., a cat sitting under a table).\n* Focus on position and relationships.\n\n🧠 *Goal:* Help learners visualize spatial relations easily.\n\n---\n\n### ✅ **Additional Output Constraints**\n\n* **Max file size:** 100KB\n* **Aspect ratio:** 1:1 (square)\n* **Style preference:** minimal, friendly, and intuitive — suited for beginners\n* **Avoid:** Text in image, overly complex scenes, cultural ambiguity\n\n---\n\nWould you like me to generate a sample prompt using a specific word, like *\"between\"* or *\"sadness\"*?\n\nWORD: \"{{ $('Select New Word').item.json.word }}\"**\nDescription: {{ $json.output.visual }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -440,
-        -755
+        -64,
+        -1620
       ],
       "id": "54fced1d-7dfa-4a51-9ef3-c2fa0a6c1d29",
       "name": "OpenAI",
@@ -225,36 +226,22 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        -142,
-        -755
+        156,
+        -1620
       ],
       "id": "7ca67606-7b9c-46e9-b404-d1c651d5ce4c",
       "name": "Read/Write Files from Disk"
     },
     {
       "parameters": {
-        "mode": "chooseBranch",
-        "output": "empty"
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        156,
-        -755
-      ],
-      "id": "96eb0f54-133c-4a97-acca-54dba1f91ed5",
-      "name": "Merge1"
-    },
-    {
-      "parameters": {
-        "fileSelector": "={{ $('Select New Word').item.json.id }}.{{ $('Read/Write Files from Disk').item.json.fileExtension }}",
+        "fileSelector": "={{ $('Select New Word').item.json.id }}.png",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        600,
-        -780
+        596,
+        -1595
       ],
       "id": "28676825-9377-4454-8834-651becb1ac28",
       "name": "Read/Write Files from Disk1"
@@ -272,7 +259,7 @@
       "typeVersion": 1.2,
       "position": [
         816,
-        -780
+        -1595
       ],
       "id": "c403ca58-da5b-44be-8054-6daf76e9c0a7",
       "name": "Telegram - Send Image",
@@ -305,10 +292,23 @@
       "typeVersion": 1.1,
       "position": [
         -1100,
-        -605
+        -1595
       ],
       "id": "2ef881b3-bdb7-470d-9653-76f4169db332",
       "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"description\": \"defenition of word\",\n  \"visual\": \"a text describing visual of word\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -292,
+        -1500
+      ],
+      "id": "03dccadd-d1fd-4062-ac22-33610d67fc48",
+      "name": "Structured Output Parser"
     }
   ],
   "pinData": {},
@@ -360,9 +360,9 @@
             "index": 0
           },
           {
-            "node": "Merge1",
+            "node": "OpenAI",
             "type": "main",
-            "index": 1
+            "index": 0
           }
         ]
       ]
@@ -372,11 +372,6 @@
         [
           {
             "node": "Agent New Word",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "OpenAI",
             "type": "main",
             "index": 0
           }
@@ -402,17 +397,6 @@
       ]
     },
     "Read/Write Files from Disk": {
-      "main": [
-        [
-          {
-            "node": "Merge1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge1": {
       "main": [
         [
           {
@@ -444,6 +428,17 @@
           }
         ]
       ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agent New Word",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -452,7 +447,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "2930f6f7-a930-4ecb-98c5-a87c5d461dc6",
+  "versionId": "88b9e059-40ea-4c0d-b2ab-577552225193",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
