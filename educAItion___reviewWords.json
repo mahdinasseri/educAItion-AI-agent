@@ -15,7 +15,7 @@
       "typeVersion": 1.7,
       "position": [
         -260,
-        -60
+        365
       ]
     },
     {
@@ -28,7 +28,7 @@
       "typeVersion": 1.2,
       "position": [
         116,
-        -60
+        465
       ],
       "id": "ff5bac8b-48e5-41ca-b510-e847225c379f",
       "name": "Telegram1",
@@ -71,7 +71,7 @@
       "typeVersion": 2.4,
       "position": [
         1592,
-        215
+        -235
       ],
       "id": "78bb3c49-cf85-43a8-973f-56a1e345b125",
       "name": "Insert Reviewed Words in user_words2",
@@ -92,7 +92,7 @@
       "typeVersion": 3,
       "position": [
         776,
-        140
+        -210
       ],
       "id": "28e4f5b6-0ef0-4dc0-909a-21a3da97ab8b",
       "name": "Loop Over Items"
@@ -107,7 +107,7 @@
       "typeVersion": 1.2,
       "position": [
         1592,
-        -160
+        -735
       ],
       "id": "af5690ec-a3ef-41fb-ab0b-a13243c1882c",
       "name": "Telegram3",
@@ -133,7 +133,7 @@
       "typeVersion": 1.7,
       "position": [
         1216,
-        -260
+        -760
       ]
     },
     {
@@ -146,7 +146,7 @@
       "typeVersion": 2.4,
       "position": [
         -700,
-        -10
+        65
       ],
       "id": "5597b3d0-7c87-4e54-a66c-5b2bf3c9bef6",
       "name": "Load Review words",
@@ -175,7 +175,7 @@
       "typeVersion": 1.1,
       "position": [
         -480,
-        -135
+        240
       ],
       "id": "314c4c57-f267-4361-940f-45a1c870d331",
       "name": "Summarize"
@@ -188,7 +188,7 @@
       "typeVersion": 3.2,
       "position": [
         996,
-        -160
+        -660
       ],
       "id": "51c0d5a1-8a9c-4a75-8003-cabe08eef99c",
       "name": "Merge3"
@@ -217,7 +217,7 @@
       "typeVersion": 1.2,
       "position": [
         1294,
-        140
+        -310
       ],
       "id": "e06f5717-b3a9-4b3e-a8ab-2aea7870eb51",
       "name": "Telegram2",
@@ -237,7 +237,7 @@
       "typeVersion": 3.2,
       "position": [
         336,
-        140
+        -210
       ],
       "id": "075d7000-848d-4dae-b408-f75d2805cb7b",
       "name": "Merge"
@@ -251,14 +251,14 @@
       "typeVersion": 1,
       "position": [
         556,
-        140
+        -210
       ],
       "id": "989d07f6-66f9-40f7-b593-625d8a886069",
       "name": "Split Out"
     },
     {
       "parameters": {
-        "model": "gpt-4.1",
+        "model": "gpt-4.1-nano",
         "options": {}
       },
       "id": "38875762-7730-410c-8627-0568fbbb8b9f",
@@ -267,7 +267,7 @@
       "typeVersion": 1,
       "position": [
         1304,
-        -40
+        -540
       ],
       "credentials": {
         "openAiApi": {
@@ -305,7 +305,7 @@
       "typeVersion": 2.2,
       "position": [
         996,
-        140
+        -310
       ],
       "id": "48451dae-77fa-435a-93a4-b1f71d680722",
       "name": "If2"
@@ -331,10 +331,125 @@
       "typeVersion": 1.1,
       "position": [
         -920,
-        -10
+        65
       ],
       "id": "4462eae1-eb7a-4360-b59e-b065813cc368",
       "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "=Review Words\n\n{{ $json.output }}",
+        "voice": "echo",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        116,
+        265
+      ],
+      "id": "e8be75ce-12e1-43ec-9255-fcb150aed4b1",
+      "name": "TTS",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        265
+      ],
+      "id": "dfdf31d7-867c-4a90-af99-7c85f273a7ba",
+      "name": "SendVoice",
+      "webhookId": "c6a36e31-c627-47fa-b72a-01bda169c8d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "=Today's Words for Review:\n{{ $json.output }}\n",
+        "voice": "echo",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1592,
+        -535
+      ],
+      "id": "7ba92d73-b7be-4668-b974-5fae23db515c",
+      "name": "TTS1",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Summarize').item.json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1812,
+        -535
+      ],
+      "id": "2f22a7da-dea6-4cce-9f15-ce8872d67a1f",
+      "name": "SendVoice1",
+      "webhookId": "c6a36e31-c627-47fa-b72a-01bda169c8d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -172,
+        585
+      ],
+      "id": "2a3218b9-a38b-4321-85d0-15ad3b1617e4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -344,6 +459,11 @@
         [
           {
             "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TTS",
             "type": "main",
             "index": 0
           }
@@ -395,6 +515,11 @@
         [
           {
             "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TTS1",
             "type": "main",
             "index": 0
           }
@@ -481,11 +606,6 @@
       "ai_languageModel": [
         [
           {
-            "node": "Agent Review",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
             "node": "All Definition Review words",
             "type": "ai_languageModel",
             "index": 0
@@ -521,6 +641,39 @@
           }
         ]
       ]
+    },
+    "TTS": {
+      "main": [
+        [
+          {
+            "node": "SendVoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TTS1": {
+      "main": [
+        [
+          {
+            "node": "SendVoice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Review",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -529,7 +682,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "6b6a2ffd-2afe-4c23-b448-5bfbaf53b250",
+  "versionId": "953caeaf-ecd1-4a2e-86e9-a9522655bd27",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
