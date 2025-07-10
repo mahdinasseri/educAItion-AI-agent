@@ -20,8 +20,9 @@
       "parameters": {
         "model": {
           "__rl": true,
+          "value": "gpt-4.1-nano",
           "mode": "list",
-          "value": "gpt-4o-mini"
+          "cachedResultName": "gpt-4.1-nano"
         },
         "options": {}
       },
@@ -99,7 +100,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -420,
+        -620,
         0
       ],
       "id": "b14e030b-3d0a-4f9c-81f9-46e6ee2aaacb",
@@ -195,7 +196,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "363f0a20-3d92-4975-99b3-e71eb8958402",
+  "versionId": "dcec043a-8a68-4a6c-90c2-efba158d0f79",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

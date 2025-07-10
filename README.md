@@ -70,6 +70,8 @@ Here’s a breakdown of the tech:
 * **VPS server** with manual setup (Linux, security, services)
 * **Domain and SSL** provided via **ArvanCloud**
 
+Everything runs on my own infrastructure, giving me full control and the ability to scale or customize anytime I want.
+
 ## Main Driver
 <img src="img/main.png" >
 
@@ -82,8 +84,11 @@ Here’s a breakdown of the tech:
 ## Module: Speaking Question
 <img src="img/speaking.png" >
 
+## Module: New Grammar
+<img src="img/newGrammar.png" >
 
-Everything runs on my own infrastructure, giving me full control and the ability to scale or customize anytime I want.
+## Module: Review Grammar
+<img src="img/reviewGrammar.png" >
 
 ---
 

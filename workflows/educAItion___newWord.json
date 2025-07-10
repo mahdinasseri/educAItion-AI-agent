@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "model": "gpt-4.1",
+        "model": "gpt-4.1-nano",
         "options": {}
       },
       "id": "e2f0be95-2d02-4dba-a2a7-e0be9c8b33d1",
@@ -11,8 +11,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -412,
-        -1500
+        -440,
+        -1800
       ],
       "credentials": {
         "openAiApi": {
@@ -30,8 +30,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        376,
-        -1495
+        340,
+        -1420
       ],
       "id": "0a01f7da-9d2c-470d-b525-0c2eb37ba043",
       "name": "Telegram",
@@ -53,7 +53,7 @@
       "typeVersion": 2.4,
       "position": [
         -880,
-        -1595
+        -1715
       ],
       "id": "13637458-953e-44fa-80a5-532d4fc9452b",
       "name": "Select New Word",
@@ -95,7 +95,7 @@
       "typeVersion": 2.4,
       "position": [
         596,
-        -1395
+        -1390
       ],
       "id": "82249866-f8ce-481b-b2c0-a6e30ee71b22",
       "name": "Insert in user_words",
@@ -121,7 +121,7 @@
       "typeVersion": 1.7,
       "position": [
         -440,
-        -1720
+        -2000
       ]
     },
     {
@@ -153,7 +153,7 @@
       "typeVersion": 2.2,
       "position": [
         -660,
-        -1595
+        -1715
       ],
       "id": "491be767-ecef-4faa-bc2d-48877b73983e",
       "name": "If"
@@ -184,8 +184,8 @@
       "type": "n8n-nodes-base.mySql",
       "typeVersion": 2.4,
       "position": [
-        -64,
-        -1820
+        -60,
+        -2080
       ],
       "id": "6f09b91f-da5e-4c3f-b058-5dbfa6872468",
       "name": "Insert in word definitions",
@@ -205,8 +205,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -64,
-        -1620
+        -60,
+        -1840
       ],
       "id": "54fced1d-7dfa-4a51-9ef3-c2fa0a6c1d29",
       "name": "OpenAI",
@@ -227,7 +227,7 @@
       "typeVersion": 1,
       "position": [
         156,
-        -1620
+        -1640
       ],
       "id": "7ca67606-7b9c-46e9-b404-d1c651d5ce4c",
       "name": "Read/Write Files from Disk"
@@ -241,7 +241,7 @@
       "typeVersion": 1,
       "position": [
         596,
-        -1595
+        -1590
       ],
       "id": "28676825-9377-4454-8834-651becb1ac28",
       "name": "Read/Write Files from Disk1"
@@ -259,7 +259,7 @@
       "typeVersion": 1.2,
       "position": [
         816,
-        -1595
+        -1590
       ],
       "id": "c403ca58-da5b-44be-8054-6daf76e9c0a7",
       "name": "Telegram - Send Image",
@@ -292,7 +292,7 @@
       "typeVersion": 1.1,
       "position": [
         -1100,
-        -1595
+        -1715
       ],
       "id": "2ef881b3-bdb7-470d-9653-76f4169db332",
       "name": "When Executed by Another Workflow"
@@ -304,11 +304,56 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
       "position": [
-        -292,
-        -1500
+        -300,
+        -1760
       ],
       "id": "03dccadd-d1fd-4062-ac22-33610d67fc48",
       "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "=#{{ $('Select New Word').item.json.word }}\n{{ $('Select New Word').item.json.definition == null ? $('Agent New Word').item.json.output.description + \"\\n\\n\" +$('Agent New Word').item.json.output.visual : $('Select New Word').item.json.definition\n}} ",
+        "voice": "fable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        596,
+        -1790
+      ],
+      "id": "772b9b06-e662-40cc-8fa5-dd8d4cf354f4",
+      "name": "TTS1",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        -1790
+      ],
+      "id": "50c1bf4d-0141-483f-9d09-4de83f1f25c4",
+      "name": "SendVoice1",
+      "webhookId": "c6a36e31-c627-47fa-b72a-01bda169c8d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -334,6 +379,11 @@
           },
           {
             "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TTS1",
             "type": "main",
             "index": 0
           }
@@ -439,6 +489,17 @@
           }
         ]
       ]
+    },
+    "TTS1": {
+      "main": [
+        [
+          {
+            "node": "SendVoice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -447,7 +508,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "88b9e059-40ea-4c0d-b2ab-577552225193",
+  "versionId": "46b844a9-3f78-45b0-82dc-0dac07856b03",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

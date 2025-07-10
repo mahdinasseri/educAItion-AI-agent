@@ -616,29 +616,6 @@
                 },
                 "conditions": [
                   {
-                    "id": "9cbc2bf9-cd92-4565-b613-6b86fde06623",
-                    "leftValue": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "string",
-                      "operation": "exists",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "loose",
-                  "version": 2
-                },
-                "conditions": [
-                  {
                     "id": "3772f492-2cb0-490a-855a-f8cc14122861",
                     "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
                     "rightValue": "/newgrammar",
@@ -715,6 +692,29 @@
                       "type": "string",
                       "operation": "equals",
                       "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9cbc2bf9-cd92-4565-b613-6b86fde06623",
+                    "leftValue": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
                     }
                   }
                 ],
@@ -810,7 +810,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1206,
+        1114,
         520
       ],
       "id": "53674f88-f012-4e62-bada-84de437765e2",
@@ -845,7 +845,7 @@
       "typeVersion": 1.2,
       "position": [
         518,
-        920
+        1720
       ],
       "id": "112f06e6-ba05-4e9e-87d1-cd3a661b2d43",
       "name": "Telegram",
@@ -869,7 +869,7 @@
       "typeVersion": 1.8,
       "position": [
         816,
-        920
+        1720
       ],
       "id": "4ba17556-fa86-4373-b762-edc8f412ddf9",
       "name": "OpenAI",
@@ -884,16 +884,17 @@
       "parameters": {
         "model": {
           "__rl": true,
+          "value": "gpt-4.1-nano",
           "mode": "list",
-          "value": "gpt-4o-mini"
+          "cachedResultName": "gpt-4.1-nano"
         },
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1036,
-        1140
+        1064,
+        1940
       ],
       "id": "a165cb67-344b-4f01-bfcf-28435866c24f",
       "name": "OpenAI Chat Model1",
@@ -906,13 +907,13 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\",\n\"question\" : \"question type: Opinion / Preference \\n structure steps: \\n\\t -State opinion \\n\\t -Give reason \\n\\t -Give example \\n\\t -Conclude \\n template phrases: \\n\\t -Personally, I prefer… \\n\\t -One main reason is that… \\n\\t -For example… \\n\\t -So overall…\"\n}"
+        "jsonSchemaExample": "{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\"\n}"
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.2,
       "position": [
-        1396,
-        1140
+        1184,
+        1940
       ],
       "id": "a3a66c24-14d4-457b-9f4e-48a05b0a16be",
       "name": "Structured Output Parser"
@@ -926,8 +927,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        1596,
-        720
+        1412,
+        1620
       ],
       "id": "fe8fb71c-3de0-4114-b884-82e9eb5fa3f3",
       "name": "TTS",
@@ -948,8 +949,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1816,
-        720
+        1632,
+        1620
       ],
       "id": "86c661a3-aa1f-4894-a2b5-601a7ec7d72c",
       "name": "SendVoice",
@@ -964,15 +965,17 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are an experienced English teacher helping students improve their speaking skills.\n\nYour task is to analyze the user's response and provide two outputs: \n\n1. **Feedback** – constructive suggestions for improvement.  \n2. **Model Answer** – an ideal response to the speaking question.\n\noutput format: \n{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\",\n\"question\" : \"question type: Opinion / Preference \\n structure steps: \\n\\t -State opinion \\n\\t -Give reason \\n\\t -Give example \\n\\t -Conclude \\n template phrases: \\n\\t -Personally, I prefer… \\n\\t -One main reason is that… \\n\\t -For example… \\n\\t -So overall…\"\n}\n\nfirst of all, retrive all question types from question_models table via getAllQuestionTypes Node. detect the questio type from speaking question (the message replyed by user) and fine the related question type from the getAllQuestionTypes node. try to use the described structure in your feedback and model answer. in feedback use that structure. but feel free to use it or not. based on history of user's answers.\n\n### 🔍 Step 1: Feedback\n- Carefully analyze the user's response for pronunciation, grammar, fluency, vocabulary, and sentence structure.\n- Focus on the most important 2–3 issues. Avoid overwhelming the learner.\n- Be supportive, friendly, and encouraging — like a patient tutor.\n- Provide clear tips to help improve the answer.\n- Use simple, easy-to-understand explanations.\n\nExample style of feedback:  \n*\"Good effort! One thing to improve is your use of the past tense — instead of 'I go', say 'I went'. Also, be careful with the pronunciation of 'comfortable'. It should sound like 'KUHM-fter-buhl'. Keep practicing — you're doing well!\"*\n\n### 📝 Step 2: Model Answer\n- Write a clear, fluent, natural-sounding answer to the same question.\n- Use vocabulary and grammar suitable for intermediate learners.\n- The answer should be in the level of 7+ for ielts.\n- Keep the tone conversational and natural — how a native speaker or advanced learner would answer.\n- Keep the answer around 4–6 sentences.\n\nStart the model answer like this:  \n*\"Here’s how I would answer this question:\"*\n\n### Tone & Style:\nSupportive, friendly, and encouraging.\n\nAvoid overly technical grammar explanations unless necessary.\n\nFocus on helping the student feel motivated to continue practicing.\n\n### ⚠️ Error Handling:\nIf the user's response is empty or not understandable, reply:\n\"I couldn’t understand your answer. Could you please try sending it again as a voice message?\"\n\n---\n\n\nThe speaking question is:  \n\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"\n\nThe user's response is:  \n\"{{ $json.text }}\"\n",
+        "text": "=The speaking question is:  \n\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"\n\nThe transcript of user's response is:  \n\"{{ $json.text }}\"\n",
         "hasOutputParser": true,
-        "options": {}
+        "options": {
+          "systemMessage": "You are an experienced English teacher helping students improve their speaking skills.\n\nYour task is to analyze the user's response and provide two outputs: \n\n1. **Feedback** – constructive suggestions for improvement.  \n2. **Model Answer** – an ideal response to the speaking question.\n\noutput format: \n{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\"\n}\n \n\nIn feedback suggest the best structure for this type of questions.\n\n### 🔍 Step 1: Feedback\n- Carefully analyze the user's response for pronunciation, grammar, fluency, vocabulary, and sentence structure.\n- Focus on the most important 4-5 issues. \n- Provide clear tips to help improve the answer.\n- Use simple, easy-to-understand explanations.\n- Score the response according to IELTS speaking part.\n\nExample style of feedback:  \n*\"Good effort! One thing to improve is your use of the past tense — instead of 'I go', say 'I went'. Also, be careful with the pronunciation of 'comfortable'. It should sound like 'KUHM-fter-buhl'. Your Score might be 6.5. Keep practicing — you're doing well!\"*\n\n### 📝 Step 2: Model Answer\n- Write a clear, fluent, natural-sounding answer to the same question.\n- Use vocabulary and grammar suitable for intermediate learners.\n- The answer should be scored 7.5+ for IELTS in speaking part.\n- Keep the tone conversational and natural — how a native speaker or advanced learner would answer.\n- Keep the answer around 6–8 sentences.\n\nStart the model answer like this:  \n*\"Here’s how I would answer this question:\"*\n\n### Tone & Style:\nSupportive, friendly, and encouraging.\n\nFocus on helping the student feel motivated to continue practicing.\n\n### ⚠️ Error Handling:\nIf the user's response is empty or not understandable, reply:\n\"I couldn’t understand your answer. Could you please try sending it again as a voice message?\""
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        1128,
-        920
+        1036,
+        1720
       ],
       "id": "7696d54f-1e88-413d-b1e6-0d410090dc1b",
       "name": "AI Agent - Speaking Evaluator"
@@ -980,14 +983,14 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "={{ $json.output.feedback }} {{ $json.output.model_answer}}",
+        "text": "={{ $json.output.feedback }}\n\n{{ $json.output.model_answer}}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1596,
-        920
+        1412,
+        1820
       ],
       "id": "7f91c1a2-b060-45d0-b276-0996bb26e1e7",
       "name": "Telegram1",
@@ -1064,69 +1067,6 @@
     },
     {
       "parameters": {
-        "operation": "select",
-        "table": {
-          "__rl": true,
-          "value": "speaking_models",
-          "mode": "list",
-          "cachedResultName": "speaking_models"
-        },
-        "returnAll": "",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.mySqlTool",
-      "typeVersion": 2.4,
-      "position": [
-        1276,
-        1140
-      ],
-      "id": "7eb77fe9-55f5-49e6-ac3b-9251f5665acd",
-      "name": "getAllQuestionTypes",
-      "credentials": {
-        "mySql": {
-          "id": "CPMXm2kZQrLO39eF",
-          "name": "MySQL account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "= \"{{ $('Telegram Trigger').item.json.user.chatID}}\""
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        1156,
-        1140
-      ],
-      "id": "52314cde-a1d4-4c0c-a197-791dda25ed86",
-      "name": "Simple Memory"
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "={{ $json.output.question }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1596,
-        1120
-      ],
-      "id": "d09d0350-ff2a-4e51-9279-194915509568",
-      "name": "Telegram2",
-      "webhookId": "e113c542-1ac9-476a-89f9-45a380ac68a0",
-      "credentials": {
-        "telegramApi": {
-          "id": "j06hYjEcJBs3NRO4",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "workflowId": {
           "__rl": true,
           "value": "454izzB5eciLhnTS",
@@ -1183,7 +1123,7 @@
       "typeVersion": 1.2,
       "position": [
         518,
-        1120
+        920
       ],
       "id": "5e93d640-696b-49dd-808b-e4f95e1201a0",
       "name": "NewGrammar Module"
@@ -1213,8 +1153,10 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are an English (IELTS) Teacher.\nyour task is evaluate the user's answer to a question and correct it. I f user is wrong explane the problem and if the answer is correct, explain in summary.\ntalk with user as a human teacher.\nthe question:\n\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"\nuser's answer:\n{{ $('Telegram Trigger').item.json.message.text }}",
-        "options": {}
+        "text": "=\n**Context of the original question (in case 1) or topic of interest (in case 2):**\n`\"{{ $('Telegram Trigger').item.json.message.reply_to_message.text }}\"`\n\n**User’s message (answer or question):**\n`\"{{ $('Telegram Trigger').item.json.message.text }}\"`\n",
+        "options": {
+          "systemMessage": "You are an experienced English teacher, specialized in IELTS preparation. Your role is to interact with the user like a human teacher would—clearly, kindly, and with helpful explanations.\n\nThe user message falls into one of two categories:\n\n1. **The user is answering a question (IELTS practice)**\n    – Evaluate the answer.\n    – If the answer is incorrect or unnatural, explain what is wrong and provide a corrected version.\n    – If the answer is correct or acceptable, confirm it and briefly explain why it works.\n\n2. **The user is asking a question about English**\n    – Provide a clear, friendly, and accurate explanation to help them understand.\n\nAlways be conversational and supportive—like a real IELTS tutor guiding the student."
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
@@ -1229,9 +1171,9 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "gpt-4.1",
+          "value": "gpt-4.1-mini",
           "mode": "list",
-          "cachedResultName": "gpt-4.1"
+          "cachedResultName": "gpt-4.1-mini"
         },
         "options": {}
       },
@@ -1308,7 +1250,7 @@
       "typeVersion": 1.2,
       "position": [
         518,
-        1320
+        1120
       ],
       "id": "a7f90289-5dc0-4766-9acb-7853190a0429",
       "name": "Review Grammar Module"
@@ -1382,7 +1324,7 @@
       "typeVersion": 1.2,
       "position": [
         518,
-        1520
+        1320
       ],
       "id": "b564c0d1-0f28-4c57-a113-9edb18869e52",
       "name": "Speaking Question Module1",
@@ -1457,7 +1399,7 @@
       "typeVersion": 1.2,
       "position": [
         518,
-        1720
+        1520
       ],
       "id": "93cda674-af38-490b-8726-1311392eda38",
       "name": "Speaking Question Data analyst  Module",
@@ -1604,13 +1546,6 @@
         ],
         [
           {
-            "node": "Telegram",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
             "node": "NewGrammar Module",
             "type": "main",
             "index": 0
@@ -1633,6 +1568,13 @@
         [
           {
             "node": "Speaking Question Data analyst  Module",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
             "type": "main",
             "index": 0
           }
@@ -1740,33 +1682,6 @@
             "node": "Telegram1",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Telegram2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "getAllQuestionTypes": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent - Speaking Evaluator",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent - Speaking Evaluator",
-            "type": "ai_memory",
-            "index": 0
           }
         ]
       ]
@@ -1803,7 +1718,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "432f857d-6eab-42a2-b441-18aab54bbdc8",
+  "versionId": "ad11399f-adf6-4708-87ec-fb00a87781a2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
