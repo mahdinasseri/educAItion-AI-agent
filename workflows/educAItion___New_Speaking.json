@@ -10,7 +10,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        -168,
+        -308,
         0
       ],
       "id": "e5d52799-e7e0-4148-a851-0a50f4a71e0a",
@@ -29,7 +29,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -200,
+        -400,
         220
       ],
       "id": "00757c3a-45e4-4425-a5e9-f6d64b0aaed7",
@@ -49,7 +49,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        -80,
+        -280,
         220
       ],
       "id": "5d42cba0-e332-45af-89f7-c2d603ecdd93",
@@ -63,12 +63,14 @@
         "forceReply": {
           "force_reply": true
         },
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegramTool",
       "typeVersion": 1.2,
       "position": [
-        100,
+        -160,
         220
       ],
       "id": "20a1d631-9dfc-47ef-9526-2585f1ba9031",
@@ -121,7 +123,7 @@
       "type": "n8n-nodes-base.mySqlTool",
       "typeVersion": 2.4,
       "position": [
-        280,
+        -40,
         220
       ],
       "id": "f553ff0d-a201-43e5-8ef4-32928d37a72c",
@@ -196,7 +198,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "dcec043a-8a68-4a6c-90c2-efba158d0f79",
+  "versionId": "19b54f63-e1a6-421e-bb67-1015c1bb9e47",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

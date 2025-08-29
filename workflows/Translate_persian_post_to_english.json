@@ -1,0 +1,180 @@
+{
+  "name": "Translate-persian-post-to-english",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ],
+      "id": "d834b15b-9717-4b95-9538-49ab53d37c70",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://virgool.io/@mahdi/%D9%BE%D8%A7%D8%B1%D8%A7%D8%AF%D9%88%DA%A9%D8%B3-%D9%85%DB%8C%D8%A7%D9%86%DA%AF%DB%8C%D9%86%DA%AF%DB%8C%D8%B1%DB%8C-%D8%B0%D9%87%D9%86-%D9%85%D8%A7-%D8%A7%D8%B2-%D8%AF%D8%A7%D8%AF%D9%87%D9%87%D8%A7%DB%8C-%D9%85%D8%AD%DB%8C%D8%B7%DB%8C-%D8%A8%D8%A7-%DB%8C%DA%A9-%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4-%D8%B1%D9%88%DB%8C-%D8%B4%D8%B1%DA%A9%D8%AA%DA%A9%D9%86%D9%86%D8%AF%DA%AF%D8%A7%D9%86-%D8%AA%D8%AF%D8%A7%DA%A9%D8%B3-%D9%86%D9%82%D8%B4%D8%AC%D9%87%D8%A7%D9%86-qqay3pcyhkuj",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -300
+      ],
+      "id": "4e2ff3ab-8d8e-48a1-8bd5-059d3d9e2bd1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1036,
+        -300
+      ],
+      "id": "6c56d974-27d4-4619-bbee-d038526cc831",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "p",
+              "cssSelector": "p",
+              "returnArray": true
+            },
+            {
+              "key": "h",
+              "cssSelector": "h4",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        -300
+      ],
+      "id": "5c23f731-9a1b-4afd-bdf3-085e202e3b3d",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional editor and translator specializing in technical and organizational content. \nYour task is to translate the following Persian text into **natural, human-like English**, suitable for publication on **Medium**.\nTranslate with the following guidelines:\n- Maintain the original meaning and nuance.\nUse a tone that is **professional, clear, and slightly conversational**.\n-Adapt culture-specific idioms into globally understandable expressions.\n- Ensure smooth paragraph flow and logical transitions.\n- Prioritize readability for international audiences interested in **tech, leadership, and data**.\nReturn only the English translation. Do not explain, summarize, or provide commentary.\nthe input is a list of paragraphs. translate one by one and return an array of translated paragraph.\nHere is the text:\n {{ $json.p }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        660,
+        -300
+      ],
+      "id": "0eb41678-d6a4-4a28-b5bc-3916dc420552",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        748,
+        -80
+      ],
+      "id": "edf481d9-07cd-4ab2-9faa-8095ffa6bef4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9d21479a-defe-4f73-924d-faec8bc5d2f5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "THKGICxDYZ5briXX",
+  "tags": []
+}

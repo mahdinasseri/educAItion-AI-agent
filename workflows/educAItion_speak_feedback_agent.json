@@ -1,0 +1,358 @@
+{
+  "name": "educAItion-speak-feedback-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        340
+      ],
+      "id": "418ae07e-0be3-4155-8feb-592305315bbd",
+      "name": "Telegram Trigger1",
+      "webhookId": "21055e70-fce9-4f5a-8396-81dd973d06dd",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        340
+      ],
+      "id": "8e3f309f-a160-44ef-b1ff-5b81d224d173",
+      "name": "Telegram",
+      "webhookId": "4d73297d-a42d-4e44-bc8f-772f7b86e413",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "en"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        140,
+        340
+      ],
+      "id": "f41ec8d4-ed7b-4fd9-a132-662208200368",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced English teacher helping students improve their speaking skills.\n\nYour task is to analyze the user's response and provide two outputs:  \n1. **Feedback** – constructive suggestions for improvement.  \n2. **Model Answer** – an ideal sample response to the speaking question.\n\noutput format: \n{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\"\n}\n\n\n### 🔍 Step 1: Feedback\n- Carefully analyze the user's response for pronunciation, grammar, fluency, vocabulary, and sentence structure.\n- Focus on the most important 2–3 issues. Avoid overwhelming the learner.\n- Be supportive, friendly, and encouraging — like a patient tutor.\n- Provide clear tips to help improve the answer.\n- Use simple, easy-to-understand explanations.\n\nExample style of feedback:  \n*\"Good effort! One thing to improve is your use of the past tense — instead of 'I go', say 'I went'. Also, be careful with the pronunciation of 'comfortable'. It should sound like 'KUHM-fter-buhl'. Keep practicing — you're doing well!\"*\n\n### 📝 Step 2: Model Answer\n- Write a clear, fluent, natural-sounding answer to the same question.\n- Use vocabulary and grammar suitable for intermediate learners.\n- Keep the tone conversational and natural — how a native speaker or advanced learner would answer.\n- Keep the answer around 4–6 sentences.\n\nStart the model answer like this:  \n*\"Here’s how I would answer this question:\"*\n\n### Tone & Style:\nSupportive, friendly, and encouraging.\n\nAvoid overly technical grammar explanations unless necessary.\n\nFocus on helping the student feel motivated to continue practicing.\n\n### ⚠️ Error Handling:\nIf the user's response is empty or not understandable, reply:\n\"I couldn’t understand your answer. Could you please try sending it again as a voice message?\"\n\n---\n\n\nThe speaking question is:  \n\"{{ $('Telegram Trigger1').item.json.message.reply_to_message.text }}\"\n\nThe user's response is:  \n\"{{ $json.text }}\"",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        392,
+        340
+      ],
+      "id": "09d05e99-eb34-44e2-9b44-2b716f3be1d8",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        560
+      ],
+      "id": "0292182e-46dc-407a-8089-ca140ad26d63",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"feedback\": \"Write the feedback here as a standalone message.\",\n  \"model_answer\": \"Write the model answer here as a standalone message.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        560
+      ],
+      "id": "e35229e0-d29d-498e-a15b-25b91f97db04",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $json.output.feedback }}\n{{ $json.output.model_answer}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        800,
+        340
+      ],
+      "id": "b09ea654-407f-4b29-b165-be93ea8957d5",
+      "name": "TTS",
+      "credentials": {
+        "openAiApi": {
+          "id": "3AAHNy1d6f7hmvmG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1020,
+        340
+      ],
+      "id": "6e616e05-ef45-48a5-bad1-18209d911103",
+      "name": "SendVoice",
+      "webhookId": "c6a36e31-c627-47fa-b72a-01bda169c8d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        560
+      ],
+      "id": "374eb91a-9615-42c2-aefe-d0ec28a47083",
+      "name": "SendText",
+      "webhookId": "1be30451-b4ad-41cb-bc65-c7b3e9d83ebb",
+      "credentials": {
+        "telegramApi": {
+          "id": "j06hYjEcJBs3NRO4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c08edfd-b6f3-4e7a-bf02-59e924009709",
+              "leftValue": "={{ $json.message.voice.file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -300,
+        340
+      ],
+      "id": "5cd0f544-cceb-4138-9c27-2057d46b0e34",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "TTS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TTS": {
+      "main": [
+        [
+          {
+            "node": "SendVoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendText": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendVoice": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6c639bbb-5cd8-449d-8d07-249ca1e8f47e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "ulA3wUEfDO66M8Oz",
+  "tags": [
+    {
+      "createdAt": "2025-06-12T09:17:49.522Z",
+      "updatedAt": "2025-06-12T09:17:49.522Z",
+      "id": "ctP1QRHmNTJd1ue4",
+      "name": "educAItion"
+    },
+    {
+      "createdAt": "2025-06-27T18:58:55.882Z",
+      "updatedAt": "2025-06-27T18:58:55.882Z",
+      "id": "gRT1wLzcSUCk8lEp",
+      "name": "agent"
+    }
+  ]
+}

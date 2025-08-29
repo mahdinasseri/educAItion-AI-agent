@@ -22,7 +22,9 @@
       "parameters": {
         "chatId": "={{ $('When Executed by Another Workflow').item.json.chatID }}",
         "text": "={{ $json.output }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -101,7 +103,9 @@
       "parameters": {
         "chatId": "={{ $('Summarize').item.json.chatID }}",
         "text": "=Today's Words for Review:\n{{ $json.output }}\n",
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -201,8 +205,8 @@
         "approvalOptions": {
           "values": {
             "approvalType": "double",
-            "approveLabel": "✅ Yes I do.",
-            "disapproveLabel": "❌ No I did not."
+            "approveLabel": "✅ Yes, I do.",
+            "disapproveLabel": "❌ No, I do not."
           }
         },
         "options": {
@@ -210,7 +214,8 @@
             "values": {
               "resumeAmount": 6
             }
-          }
+          },
+          "appendAttribution": false
         }
       },
       "type": "n8n-nodes-base.telegram",
@@ -682,7 +687,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "953caeaf-ecd1-4a2e-86e9-a9522655bd27",
+  "versionId": "54f05e8c-4dc4-4a52-8d12-71464d663fd3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

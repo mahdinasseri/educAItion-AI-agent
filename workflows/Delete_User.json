@@ -1,0 +1,65 @@
+{
+  "name": "Delete User",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM charges WHERE user_id = 24;\nDELETE FROM user_activities WHERE user_id =24;\nDELETE FROM customers WHERE id =24;\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        280,
+        -100
+      ],
+      "id": "8e86633c-6dc3-4a4e-a2cd-59307078f783",
+      "name": "Delete Users",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "table": {
+          "__rl": true,
+          "value": "customers",
+          "mode": "list",
+          "cachedResultName": "customers"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        280,
+        160
+      ],
+      "id": "76fc8073-1c0e-4a1f-9f00-d5aa43203708",
+      "name": "All Users",
+      "credentials": {
+        "mySql": {
+          "id": "CPMXm2kZQrLO39eF",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6bcc96d0-d7f9-4627-9062-549e828fc3ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
+  },
+  "id": "TwWtryala1Kej1ZI",
+  "tags": []
+}

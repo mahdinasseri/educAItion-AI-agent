@@ -11,7 +11,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1,
       "position": [
-        -632,
+        -572,
         -460
       ],
       "credentials": {
@@ -29,7 +29,9 @@
         "forceReply": {
           "force_reply": true
         },
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -218,7 +220,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "0c8bdaae-19f2-4e9d-baf9-c88c437602f0",
+  "versionId": "cfabee9e-00bd-4d1c-8892-741f7489737d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"

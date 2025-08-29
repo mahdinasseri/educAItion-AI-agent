@@ -15,7 +15,7 @@
       "typeVersion": 1.7,
       "position": [
         -480,
-        -135
+        -140
       ]
     },
     {
@@ -26,13 +26,15 @@
         "forceReply": {
           "force_reply": true
         },
-        "additionalFields": {}
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
         -104,
-        -135
+        -140
       ],
       "id": "583489fa-494a-446e-8b53-35364de206e5",
       "name": "Telegram1",
@@ -75,7 +77,7 @@
       "typeVersion": 2.4,
       "position": [
         116,
-        -135
+        -140
       ],
       "id": "b6cf64b0-508f-4e04-9b8a-0133787ebb47",
       "name": "Insert Reviewed Words in user_words2",
@@ -97,7 +99,7 @@
       "typeVersion": 1,
       "position": [
         -392,
-        85
+        80
       ],
       "credentials": {
         "openAiApi": {
@@ -127,7 +129,7 @@
       "typeVersion": 1.1,
       "position": [
         -920,
-        -135
+        -140
       ],
       "id": "1f537280-8123-4a55-96fb-eaaa5e083a56",
       "name": "When Executed by Another Workflow"
@@ -142,7 +144,7 @@
       "typeVersion": 2.4,
       "position": [
         -700,
-        -135
+        -140
       ],
       "id": "8264bbd3-7b6e-46f0-93ee-9c7a011163df",
       "name": "Load Review grammar",
@@ -223,7 +225,7 @@
     "timezone": "Asia/Tehran",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "1a253089-4fab-428b-99b9-50547e02766d",
+  "versionId": "3205ed8d-09d4-4aa7-b276-40014224ba90",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "69d0d047188cb9156a6f7134cb2977dd1da142c7fa73b37c2ba1fed7d3c72efb"
